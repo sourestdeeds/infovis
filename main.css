@@ -1,0 +1,18 @@
+
+
+.svg-container {
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	padding-bottom: 100%; /*width vs padding-bottom bottom should match aspect ratio of svg */
+	vertical-align: middle;
+	overflow: hidden;
+	border:1px solid black
+}
+
+.svg-content {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+}

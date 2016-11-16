@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>D3 Test</title>
+		<link rel="stylesheet" type="text/css" href="main.css">
+		<script src="d3.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body onload="main()">
+		<h1>D3 Test</h1>
+		<div class="svg-container">
+			<svg id="planets" viewBox="-100 -100 200 200" preserveAspectRatio="xMinYMin meet" class="svg-content">
+				<circle cx="0" cy="0" r="5" fill="orange"></circle>
+			</svg>
+		</div>
+
+		<div class="svg-container">
+			<svg id="plot" viewBox="0 0 1000 1000" preserveAspectRatio="xMinYMin meet" class="svg-content">
+			</svg>
+		</div>
+
+		<div class="svg-container">
+			<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="svg-content">
+				<circle cx="500" cy="500" r="500"></circle>
+			</svg>
+		</div>
+	</body>
+</html>
