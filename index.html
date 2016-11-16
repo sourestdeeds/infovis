@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>D3 Test</title>
-		<link rel="stylesheet" type="text/css" href="css/main.css">
-		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-		<script src="js/d3.js"></script>
-		<!--<script src="js/bootstrap.min.js"></script>-->
-		<script src="js/main.js"></script>
+<head>
+	<title>PlanetVis</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<script src="js/d3.js"></script>
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/main.js"></script>
 
-		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-	</head>
-	<body onload="main()">
-		<h1>D3 Test</h1>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+</head>
+<body onload="main()">
+		<!-- <h1>D3 Test</h1>
 		<p>
 			Test
 		</p>
@@ -30,6 +31,25 @@
 			<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="svg-content">
 				<circle cx="500" cy="500" r="500"></circle>
 			</svg>
+		</div> -->
+
+
+		<div>
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+				<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+				<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="home">...</div>
+				<div role="tabpanel" class="tab-pane" id="profile">..ee.</div>
+				<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
+				<div role="tabpanel" class="tab-pane" id="settings">.eeeeeeee..</div>
+			</div>
 		</div>
 	</body>
-</html>
+	</html>
