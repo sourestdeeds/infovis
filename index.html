@@ -4,8 +4,12 @@
 	<title>PlanetVis</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/classic-min.css">
 	<script src="js/d3.js"></script>
 	<script src="js/jquery-3.1.1.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/jquery.mousewheel.min.js"></script>
+	<script src="js/jqrangeslider.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/main.js"></script>
 
@@ -45,11 +49,22 @@
 
 			<!-- Tab panes -->
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="home">...</div>
+				<div role="tabpanel" class="tab-pane active" id="home">
+					
+				</div>
 				<div role="tabpanel" class="tab-pane" id="profile">..ee.</div>
 				<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
-				<div role="tabpanel" class="tab-pane" id="settings">.eeeeeeee..</div>
 			</div>
 		</div>
+		<footer>
+			<div id="slider"></div>
+		</footer>
+
+		<script>
+			$("#slider").rangeSlider({
+				bounds: {min: 1989, max: 2016},
+				defaultValues: {min: 1989, max: 2016}
+			});
+		</script>
 	</body>
 	</html>
