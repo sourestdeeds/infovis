@@ -56,7 +56,7 @@ function processData(data) {
 }
 
 function parseData(callback) {
-	d3.text('planets.csv', function(csv) {
+	d3.text('../data/planets.csv', function(csv) {
 		csv = csv.replace(/^[#@][^\n]*\n/mg, '');
 		var data = d3.csvParse(csv);
 		callback(data);
