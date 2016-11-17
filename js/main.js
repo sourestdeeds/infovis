@@ -1,15 +1,16 @@
+/*
+ * Entrypoint.
+ */
 function main() {
-	//Create visualisations
-	earthVisualisation = new EarthVisualisation();
+	visualisationManager.addVisualisation(new EarthVisualisation());
+	visualisationManager.addVisualisation(new StackedAreaPlot());
 
 	dataHandler.onDataLoaded(function() {
-		console.log('Data loaded!');
-		drawStackedAreaPlot();
-		//Place calls to other data-using functions here
-		earthVisualisation.draw();
+		visualisationManager.drawAll();
 	});
 }
 
+/*
 function planetPlotter(data) {
 	var xTarget = 'pl_disc';
 	var yTarget = 'pl_bmassj';
@@ -70,3 +71,4 @@ function parseData(callback) {
 		callback(data);
 	})
 }
+*/

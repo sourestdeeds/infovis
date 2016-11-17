@@ -18,10 +18,11 @@
 	<script src="js/libs/bootstrap.min.js"></script>
 	
 	<script src="js/datahandler.js"></script>
+	<script src="js/visualisationmanager.js"></script>
 	<script src="js/windowsizehandler.js"></script>
 	<script src="js/earthvisualisation.js"></script>
+	<script src="js/stackedareaplot.js"></script>
 	<script src="js/main.js"></script>
-	<script src="js/stacked-area-plot.js"></script>
 
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 </head>
@@ -84,7 +85,8 @@
 				step: 1
 			});
 			$("#slider").bind("valuesChanging", function(e, data){
-				dataHandler.setRange(data.values.min, data.values.max)
+				dataHandler.setRange(data.values.min, data.values.max);
+				visualisationManager.drawAll();
 			});
 		</script>
 	</body>
