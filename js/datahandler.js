@@ -13,7 +13,7 @@ DataHandler.prototype.parseData = function() {
 	var self = this;
 	d3.text(this.dataFile, function(csv) {
 		var csv = csv.replace(/^[#@][^\n]*\n/mg, '');
-		self.data = d3.csvParse(csv);
+		self.data = d3.csv.parse(csv);
 		self.selectedData = self.data;
 		self.dataLoaded = true;
 		self.dataLoadedCallbackQueue.forEach(function(callback) {callback()});
