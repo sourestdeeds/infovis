@@ -1,6 +1,7 @@
 function main() {
 	dataHandler.onDataLoaded(function() {
 		console.log('Data loaded!');
+		drawStackedAreaPlot();
 		//Place calls to other data-using functions here
 	});
 }
