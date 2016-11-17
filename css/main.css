@@ -1,22 +1,3 @@
-
-
-.svg-container {
-	display: inline-block;
-	position: relative;
-	width: 100%;
-	padding-bottom: 100%; /*width vs padding-bottom bottom should match aspect ratio of svg */
-	vertical-align: middle;
-	overflow: hidden;
-	border:1px solid black
-}
-
-.svg-content {
-	display: inline-block;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
 body {
 	padding-top: 40px;
 	padding-bottom: 90px;
@@ -49,4 +30,9 @@ footer {
 
 .tab-pane {
 	border: 1px solid red;
+}
+
+#earth-svg {
+	width: 100%;
+	height: 100%;
 }

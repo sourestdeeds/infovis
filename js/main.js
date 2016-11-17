@@ -1,7 +1,11 @@
 function main() {
+	//Create visualisations
+	earthVisualisation = new EarthVisualisation();
+
 	dataHandler.onDataLoaded(function() {
 		console.log('Data loaded!');
 		//Place calls to other data-using functions here
+		earthVisualisation.draw();
 	});
 }
 
