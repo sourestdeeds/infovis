@@ -3,11 +3,13 @@
  */
 function main() {
     catchTabEvents();
+    timeSlider.setup();
 
 	visualisationManager.addVisualisation(new EarthVisualisation());
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 
 	dataHandler.onDataLoaded(function() {
+	    dataHandler.setRange(timeSlider.DEFAULT_RANGE.min, timeSlider.DEFAULT_RANGE.max);
 		visualisationManager.switchTo(''); // TODO put default active tab here
 	});
 }

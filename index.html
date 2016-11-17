@@ -20,6 +20,7 @@
 	<script src="js/datahandler.js"></script>
 	<script src="js/visualisationmanager.js"></script>
 	<script src="js/windowsizehandler.js"></script>
+	<script src="js/timeslider.js"></script>
 	<script src="js/earthvisualisation.js"></script>
 	<script src="js/stackedareaplot.js"></script>
 	<script src="js/main.js"></script>
@@ -27,67 +28,55 @@
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 </head>
 <body onload="main()">
-		<!-- <h1>D3 Test</h1>
-		<p>
-			Test
-		</p>
-		<div class="svg-container">
-			<svg id="planets" viewBox="-100 -100 200 200" preserveAspectRatio="xMinYMin meet" class="svg-content">
-				<circle cx="0" cy="0" r="5" fill="orange"></circle>
-			</svg>
-		</div>
+	<!-- <h1>D3 Test</h1>
+	<p>
+		Test
+	</p>
+	<div class="svg-container">
+		<svg id="planets" viewBox="-100 -100 200 200" preserveAspectRatio="xMinYMin meet" class="svg-content">
+			<circle cx="0" cy="0" r="5" fill="orange"></circle>
+		</svg>
+	</div>
 
-		<div class="svg-container">
-			<svg id="plot" viewBox="0 0 1000 1000" preserveAspectRatio="xMinYMin meet" class="svg-content">
-			</svg>
-		</div>
+	<div class="svg-container">
+		<svg id="plot" viewBox="0 0 1000 1000" preserveAspectRatio="xMinYMin meet" class="svg-content">
+		</svg>
+	</div>
 
-		<div class="svg-container">
-			<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="svg-content">
-				<circle cx="500" cy="500" r="500"></circle>
-			</svg>
-		</div> -->
+	<div class="svg-container">
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="svg-content">
+			<circle cx="500" cy="500" r="500"></circle>
+		</svg>
+	</div> -->
 
 
-		<div>
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Discovery Locations</a></li>
-				<li role="presentation"><a href="#earth" aria-controls="earth" role="tab" data-toggle="tab">Earth</a></li>
-				<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-				<li role="presentation"><a href="#stacked-area-plot" aria-controls="stacked-area-plot" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
-			</ul>
+	<div>
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Discovery Locations</a></li>
+			<li role="presentation"><a href="#earth" aria-controls="earth" role="tab" data-toggle="tab">Earth</a></li>
+			<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+			<li role="presentation"><a href="#stacked-area-plot" aria-controls="stacked-area-plot" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
+		</ul>
 
-			<!-- Tab panes -->
-			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="home">
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="home">
 
-				</div>
-				<div role="tabpanel" class="tab-pane" id="earth">
-					<svg id="earth-svg">
-						<circle cx="0" cy="0" r="20"></circle>
-					</svg>
-				</div>
-				<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
-				<div role="tabpanel" class="tab-pane" id="stacked-area-plot">
-                    <div id="stacked-area-plot-div" />
-				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="earth">
+				<svg id="earth-svg">
+					<circle cx="0" cy="0" r="20"></circle>
+				</svg>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
+			<div role="tabpanel" class="tab-pane" id="stacked-area-plot">
+                <div id="stacked-area-plot-div" />
 			</div>
 		</div>
-		<footer>
-			<div id="slider"></div>
-		</footer>
-
-		<script>
-			$("#slider").rangeSlider({
-				bounds: {min: 1989, max: 2016},
-				defaultValues: {min: 1989, max: 2016},
-				step: 1
-			});
-			$("#slider").bind("valuesChanging", function(e, data){
-				dataHandler.setRange(data.values.min, data.values.max);
-				visualisationManager.updateAll();
-			});
-		</script>
-	</body>
-	</html>
+	</div>
+	<footer>
+		<div id="timeSlider"></div>
+	</footer>
+</body>
+</html>

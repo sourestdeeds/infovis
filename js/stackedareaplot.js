@@ -1,14 +1,12 @@
 var StackedAreaPlot = function() {
     this.tabID = "#stacked-area-plot";
     this.chart = null;
+    this.BIN_COUNT = 20;
 }
 
-StackedAreaPlot.prototype.draw = function() {
-    console.log('StackedAreaPlot drawn');
-    
-    /*
+StackedAreaPlot.prototype.draw = function() {/*
     var methods = this.discMethods(dataHandler.selectedData);
-    console.log(methods);
+    console.log(dataHandler.currentRange);
     
     if (this.chart == null) {
         this.chart = c3.generate({
@@ -26,29 +24,37 @@ StackedAreaPlot.prototype.draw = function() {
                 groups: [['data1', 'data2']]
             }
         });
-    } else {
-        console.log('update ignored');
     }
-    */
-}
-
+*/}
+/*
 StackedAreaPlot.prototype.discMethods = function(data) {
     var methods = {};
     
     data.forEach(function(entry) {
         var method = entry['pl_discmethod'];
-        var year = entry['pl_discyear'];
+        var year = Number(entry['pl_discyear']);
         
         if (method in methods) {
-            methods[method] += 1;
+            methods[method].push(year);
         } else {
-            methods[method] = 1;
+            methods[method] = [year];
         }
     });
     
     return methods;
 }
 
-StackedAreaPlot.prototype.hist = function(data, bucketWidth) {
-    
+StackedAreaPlot.prototype.hists = function(methods, bucketWidth) {
+    var hists = [];
+
+    for (var method in methods) {
+        if (methods.hasOwnProperty(method)) {
+            //var hist = d3.layout.histogram()
+            //    .bins(this.BIN_COUNT)
+            //   .range(dataHandler.currentRange)
+            //    (methods[method]));
+            //console.log(hist);
+        }
+    }
 }
+*/
