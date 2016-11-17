@@ -12,5 +12,4 @@ EarthVisualisation.prototype.getSvgSize = function () {
 	var width = $('#earth-svg').outerWidth();
 	var height = $('#earth-svg').outerHeight();
 	return {width: width, height: height};
-	console.log('EarthVisualisation drawn');
 };
