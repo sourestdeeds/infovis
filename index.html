@@ -3,15 +3,19 @@
 <head>
 	<title>PlanetVis</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/classic-min.css">
-	<script src="js/d3.js"></script>
-	<script src="js/jquery-3.1.1.min.js"></script>
-	<script src="js/jquery-ui.min.js"></script>
-	<script src="js/jquery.mousewheel.min.js"></script>
-	<script src="js/jqrangeslider.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/libs/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/libs/classic-min.css">
+	<link rel="stylesheet" type="text/css" href="css/libs/c3.min.css">
+	<script src="js/libs/d3.v3.min.js"></script>
+	<script src="js/libs/c3.min.js"></script>
+	<script src="js/libs/jquery-3.1.1.min.js"></script>
+	<script src="js/libs/jquery-ui.min.js"></script>
+	<script src="js/libs/jquery.mousewheel.min.js"></script>
+	<script src="js/libs/jqrangeslider.js"></script>
+	<script src="js/libs/bootstrap.min.js"></script>
 	<script src="js/datahandler.js"></script>
+	<script src="js/windowsizehandler.js"></script>
+	<script src="js/earthvisualisation.js"></script>
 	<script src="js/main.js"></script>
 
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -43,7 +47,7 @@
 			<!-- Nav tabs -->
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Discovery Locations</a></li>
-				<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation"><a href="#earth" aria-controls="earth" role="tab" data-toggle="tab">Earth</a></li>
 				<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
 				<li role="presentation"><a href="#stacked-area-plot-tab" aria-controls="stacked-area-plot-tab" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
 			</ul>
@@ -53,7 +57,11 @@
 				<div role="tabpanel" class="tab-pane active" id="home">
 
 				</div>
-				<div role="tabpanel" class="tab-pane" id="profile">..ee.</div>
+				<div role="tabpanel" class="tab-pane" id="earth">
+					<svg id="earth-svg">
+						<circle cx="0" cy="0" r="20"></circle>
+					</svg>
+				</div>
 				<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
 				<div role="tabpanel" class="tab-pane" id="stacked-area-plot-tab">
                     <div id="stacked-area-plot" />
