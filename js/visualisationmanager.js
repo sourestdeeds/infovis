@@ -20,7 +20,6 @@ VisualisationManager.prototype.update = function(tabID) {
 }
 
 VisualisationManager.prototype.switchTo = function(tabID) {
-    console.log(tabID);
     this.update(tabID);
     this.activeTab = tabID;
 }
