@@ -2,12 +2,22 @@
  * Entrypoint.
  */
 function main() {
+    catchTabEvents();
+
 	visualisationManager.addVisualisation(new EarthVisualisation());
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 
 	dataHandler.onDataLoaded(function() {
-		visualisationManager.drawAll();
+		visualisationManager.switchTo(''); // TODO put default active tab here
 	});
+}
+
+function catchTabEvents() {
+    // JQuery magic copied off Stack Overflow, don't ask
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr('href');
+        visualisationManager.switchTo(target);
+    });
 }
 
 /*

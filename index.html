@@ -55,7 +55,7 @@
 				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Discovery Locations</a></li>
 				<li role="presentation"><a href="#earth" aria-controls="earth" role="tab" data-toggle="tab">Earth</a></li>
 				<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-				<li role="presentation"><a href="#stacked-area-plot-tab" aria-controls="stacked-area-plot-tab" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
+				<li role="presentation"><a href="#stacked-area-plot" aria-controls="stacked-area-plot" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
 			</ul>
 
 			<!-- Tab panes -->
@@ -69,8 +69,8 @@
 					</svg>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
-				<div role="tabpanel" class="tab-pane" id="stacked-area-plot-tab">
-                    <div id="stacked-area-plot" />
+				<div role="tabpanel" class="tab-pane" id="stacked-area-plot">
+                    <div id="stacked-area-plot-div" />
 				</div>
 			</div>
 		</div>
@@ -86,7 +86,7 @@
 			});
 			$("#slider").bind("valuesChanging", function(e, data){
 				dataHandler.setRange(data.values.min, data.values.max);
-				visualisationManager.drawAll();
+				visualisationManager.updateAll();
 			});
 		</script>
 	</body>

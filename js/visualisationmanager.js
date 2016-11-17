@@ -1,23 +1,38 @@
-/*
- * Visualisation implementation objects should be added to this object in the
- * main routine. It will invoke the draw() method on all visualisations when
- * drawAll() is invoked, for example when the DataHandler has loaded the CSV or
- * when the timeline slider is changed by the user.
- */
-
 var VisualisationManager = function() {
-    this.visualisations = [];
+    this.activeTab = undefined;
+    this.tabs = {};
 }
 
 VisualisationManager.prototype.addVisualisation = function(visualisation) {
-    this.visualisations.push(visualisation);
+    this.tabs[visualisation.tabID] = {
+        "pendingUpdate": true,
+        "visualisation": visualisation
+    };
 }
 
-// Invoked whenever redrawing should happen
-VisualisationManager.prototype.drawAll = function() {
-    this.visualisations.forEach(function(visualisation) {
-        visualisation.draw();
-    });
+VisualisationManager.prototype.update = function(tabID) {
+    var tab = this.tabs[tabID];
+
+    if (tab && tab.pendingUpdate) {
+        tab.visualisation.draw();
+        tab.pendingUpdate = false;
+    }
+}
+
+VisualisationManager.prototype.switchTo = function(tabID) {
+    console.log(tabID);
+    this.update(tabID);
+    this.activeTab = tabID;
+}
+
+VisualisationManager.prototype.updateAll = function() {
+    for (var tab in this.tabs) {
+        if (this.tabs.hasOwnProperty(tab)) {
+            this.tabs[tab].pendingUpdate = true;
+        }
+    }
+    
+    this.update(this.activeTab);
 }
 
 var visualisationManager = new VisualisationManager();
