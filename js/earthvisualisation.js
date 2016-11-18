@@ -10,6 +10,16 @@ var EarthVisualisation = function() {
 	this.svg = d3.select('#earth-svg');
 	//TODO: redraw when resized
 	//$('#earth-svg').resize(this.draw)
+
+	var self = this
+	this.zoom = d3.behavior.zoom()
+		.scaleExtent([0.01,1])
+		.on('zoom', function() {
+			self.rescale(d3.event.scale);
+		})
+		.scale(0);
+
+	this.svg.call(this.zoom);
 }
 
 EarthVisualisation.prototype.draw = function () {
@@ -31,6 +41,7 @@ EarthVisualisation.prototype.draw = function () {
 };
 
 EarthVisualisation.prototype.rescale = function (scale) {
+	console.log(scale);
 	this.scale = scale;
 	this._setPlanetScaledPositions();
 };
