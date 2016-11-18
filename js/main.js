@@ -10,10 +10,11 @@ function main() {
 
 	visualisationManager.addVisualisation(earthVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
+	visualisationManager.addVisualisation(new WorldMapVisualisation());
 
 	dataHandler.onDataLoaded(function() {
 	    dataHandler.setRange(timeSlider.DEFAULT_RANGE.min, timeSlider.DEFAULT_RANGE.max);
-		visualisationManager.switchTo(''); // TODO put default active tab here
+		visualisationManager.switchTo('#worldmap'); // TODO put default active tab here
 	});
 }
 
