@@ -7,19 +7,26 @@ StackedAreaPlot.prototype.draw = function() {
     var hists = this._hists(methods);
     var groups = [for (hist of hists) hist[0]];
     var types = {};
+    var ticks = this._generateXTicks();
+    
+    console.log(ticks);
     
     groups.forEach(function(group) {
-        types[group] = 'area-spline';
+        types[group] = 'area';
     });
     
-    console.log(hists[0]);
-    
     this.chart = c3.generate({
-        bindto: '#stacked-area-plot-div',
-        data: {
+        'bindto': '#stacked-area-plot-div',
+        'data': {
             'columns': hists,
             'types': types,
             'groups': [groups]
+        },
+        'axis': {
+            'x': {
+                'type': 'category',
+                'categories': ticks
+            }
         }
     });
 }
@@ -43,9 +50,7 @@ StackedAreaPlot.prototype._discMethods = function(data) {
 
 StackedAreaPlot.prototype._hists = function(methods) {
     var hists = [];
-    var binCount = Math.floor((dataHandler.currentRange[1] - dataHandler.currentRange[0]) / 2);
-    
-    console.log(binCount);
+    var binCount = dataHandler.currentRange[1] - dataHandler.currentRange[0];
 
     for (var method in methods) {
         if (methods.hasOwnProperty(method)) {
@@ -60,5 +65,17 @@ StackedAreaPlot.prototype._hists = function(methods) {
     }
     
     return hists;
+}
+
+StackedAreaPlot.prototype._generateXTicks = function() {
+    var i = dataHandler.currentRange[0];
+    var ticks = [];
+    
+    while (i <= dataHandler.currentRange[1]) {
+        ticks.push(i.toString());
+        i += 1;
+    }
+    
+    return ticks;
 }
 
