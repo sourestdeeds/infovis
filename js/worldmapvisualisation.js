@@ -54,7 +54,7 @@ WorldMapVisualisation.prototype.resize = function () {
   		.attr('height', '100%')
 
 	self.projection = d3.geo.mercator()
-					.translate([(self.width/2), (self.height)])
+					.translate([(self.width/2), (self.height / 2)])
 					.scale( self.width / 2 / Math.PI);
 
 	self.path = d3.geo.path().projection(self.projection);
