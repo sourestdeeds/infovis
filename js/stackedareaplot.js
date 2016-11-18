@@ -5,7 +5,12 @@ var StackedAreaPlot = function() {
 StackedAreaPlot.prototype.draw = function() {
     var methods = this._discMethods(dataHandler.selectedData);
     var hists = this._hists(methods);
-    var groups = [for (hist of hists) hist[0]];
+    var groups = [];
+    
+    hists.forEach(function(hist) {
+        groups.push(hist[0]);
+    });
+    
     var types = {};
     var ticks = this._generateXTicks();
     
@@ -59,7 +64,12 @@ StackedAreaPlot.prototype._hists = function(methods) {
                 .range(dataHandler.currentRange)
                 (methods[method]);
             
-            var hist = [for (bin of bins) bin.y];
+            var hist = [];
+            
+            bins.forEach(function(bin) {
+                hist.push(bin.y);
+            });
+
             hists.push([method].concat(hist));
         }
     }
