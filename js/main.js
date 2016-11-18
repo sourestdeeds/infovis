@@ -2,10 +2,13 @@
  * Entrypoint.
  */
 function main() {
+	// Visualisation in global namespace for easy access while debugging
+	earthVisualisation = new EarthVisualisation();
+
     catchTabEvents();
     timeSlider.setup();
 
-	visualisationManager.addVisualisation(new EarthVisualisation());
+	visualisationManager.addVisualisation(earthVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 
 	dataHandler.onDataLoaded(function() {
