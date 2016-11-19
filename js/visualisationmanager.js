@@ -34,4 +34,12 @@ VisualisationManager.prototype.updateAll = function() {
     this.update(this.activeTab);
 }
 
+VisualisationManager.prototype.onWindowResize = function() {
+    var tab = this.tabs[this.activeTab];
+
+    if (tab) {
+        tab.visualisation.draw();
+    }
+}
+
 var visualisationManager = new VisualisationManager();
