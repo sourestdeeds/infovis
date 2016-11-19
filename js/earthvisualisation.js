@@ -5,16 +5,27 @@ var EarthVisualisation = function() {
 	this.DEFAULT_SCALE = 1;
 	this.DEFAULT_SCALE_DISTANCE = 10000;
 
+	this.DEFAULT_PLANET_SCALE = 0.5;
+
 	this.svg = d3.select('#earth-svg');
+	this.earth = this.svg.select('.earth');
 
 	var self = this
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.01, 10000])
+		.scale(this.DEFAULT_SCALE)
 		.on('zoom', function() {
 			self._setPlanetScaledPositions();
-		})
-		.scale(this.DEFAULT_SCALE);
+		});
 	this.svg.call(this.zoom);
+
+	this.planetZoom = d3.behavior.zoom()
+		.scaleExtent([0.1, 10])
+		.scale(this.DEFAULT_PLANET_SCALE)
+		.on('zoom', function() {
+			self._setPlanetScales();
+		});
+
 
 	//TODO: redraw when resized. Handled by VisualisationManager?
 }
@@ -22,8 +33,7 @@ var EarthVisualisation = function() {
 EarthVisualisation.prototype.draw = function () {
 	var center = this._getSvgCenter();
 
-	d3.select('circle.earth')
-		.attr('cx', center.x)
+	this.earth.attr('cx', center.x)
 		.attr('cy', center.y);
 
 	var planets = this.svg.selectAll('circle.planet').data(dataHandler.selectedData);
@@ -32,8 +42,10 @@ EarthVisualisation.prototype.draw = function () {
 	planets.classed('planet', true)
 		.attr('cx', center.x)
 		.attr('fill', 'brown')
-		.attr('r', 10);
+		.attr('opacity', '0.5')
+		.attr('r', 1);
 	this._setPlanetScaledPositions();
+	this._setPlanetScales();
 	this._setPlanetRotations();
 };
 
@@ -43,20 +55,21 @@ EarthVisualisation.prototype.rescale = function (scale) {
 	this.zoom.event(this.svg);
 };
 
+EarthVisualisation.prototype.rescalePlanets = function (scale) {
+	this.planetZoom.scale(scale);
+	// Trigger zoom event listeners
+	this.planetZoom.event(this.svg);
+};
+
 EarthVisualisation.prototype._setPlanetRotations = function () {
 	//TODO: base rotation on something else?
 
 	var center = this._getSvgCenter();
-	var scaler = d3.scale.linear()
-		.domain([0, 3500])
-		.range([0,360]);
 	d3.selectAll('circle.planet')
-		.attr('transform', function(d) {return 'rotate(' + scaler(+d['rowid']) + ',' + center.x + ',' + center.y + ')'});
+		.attr('transform', function(d) {return 'rotate(' + +d['rowid']*13 % 360 + ',' + center.x + ',' + center.y + ')'});
 };
 
 EarthVisualisation.prototype._setPlanetScaledPositions = function () {
-	console.log(this.zoom.scale());
-
 	var centerY = this._getSvgCenter().y;
 	var maxY = centerY - 10;
 	var scaler = d3.scale.linear()
@@ -64,6 +77,13 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
 		.attr('cy', function(d) {return centerY + scaler(+d['st_dist'])});
+};
+
+EarthVisualisation.prototype._setPlanetScales = function () {
+	var scale = this.planetZoom.scale();
+	this.earth.attr('r', scale);
+	this.svg.selectAll('circle.planet')
+		.attr('r', function(d) {return +d['pl_rade'] * scale});
 };
 
 EarthVisualisation.prototype._getSvgSize = function () {
