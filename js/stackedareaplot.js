@@ -1,5 +1,6 @@
 var StackedAreaPlot = function() {
     this.tabID = "#stacked-area-plot";
+    this.chart = null;
 }
 
 StackedAreaPlot.prototype.draw = function() {
@@ -14,26 +15,34 @@ StackedAreaPlot.prototype.draw = function() {
     var types = {};
     var ticks = this._generateXTicks();
     
-    console.log(ticks);
-    
     groups.forEach(function(group) {
         types[group] = 'area';
     });
     
-    this.chart = c3.generate({
-        'bindto': '#stacked-area-plot-div',
-        'data': {
+    if (this.chart == null) {
+        this.chart = c3.generate({
+            'bindto': '#stacked-area-plot-div',
+            'data': {
+                'columns': hists,
+                'types': types,
+                'groups': [groups]
+            },
+            'axis': {
+                'x': {
+                    'type': 'category',
+                    'categories': ticks
+                }
+            }
+        });
+    } else {
+        this.chart.load({
             'columns': hists,
             'types': types,
-            'groups': [groups]
-        },
-        'axis': {
-            'x': {
-                'type': 'category',
-                'categories': ticks
-            }
-        }
-    });
+            'groups': [groups],
+            'categories': ticks,
+            'unload': true
+        });
+    }
 }
 
 StackedAreaPlot.prototype._discMethods = function(data) {
