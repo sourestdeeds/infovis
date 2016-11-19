@@ -1,7 +1,7 @@
 var EarthVisualisation = function() {
 	this.tabID = '#earth';
 
-	//On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
+	// On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
 	this.DEFAULT_SCALE = 1;
 	this.DEFAULT_SCALE_DISTANCE = 10000;
 
@@ -25,9 +25,6 @@ var EarthVisualisation = function() {
 		.on('zoom', function() {
 			self._setPlanetScales();
 		});
-
-
-	//TODO: redraw when resized. Handled by VisualisationManager?
 }
 
 EarthVisualisation.prototype.draw = function () {
@@ -41,12 +38,13 @@ EarthVisualisation.prototype.draw = function () {
 	planets.enter().append('circle');
 	planets.classed('planet', true)
 		.attr('cx', center.x)
-		.attr('fill', 'brown')
+		.attr('fill', 'black')
 		.attr('opacity', '0.5')
 		.attr('r', 1);
 	this._setPlanetScaledPositions();
 	this._setPlanetScales();
 	this._setPlanetRotations();
+	this._setPlanetColors();
 };
 
 EarthVisualisation.prototype.rescale = function (scale) {
@@ -59,6 +57,11 @@ EarthVisualisation.prototype.rescalePlanets = function (scale) {
 	this.planetZoom.scale(scale);
 	// Trigger zoom event listeners
 	this.planetZoom.event(this.svg);
+};
+
+EarthVisualisation.prototype._setPlanetColors = function () {
+	d3.selectAll('circle.planet')
+		.attr('fill', function(d) {return dataHandler.discoveryMethodsColorMap(d['pl_discmethod'])});
 };
 
 EarthVisualisation.prototype._setPlanetRotations = function () {
