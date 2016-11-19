@@ -6,6 +6,8 @@ function onResize() {
 
 	$('body').css('padding-top', navbarHeight)
 	$('.tab-pane').css('height', tabpaneHeight)
+
+	visualisationManager.onWindowResize();
 }
 
 $(window).resize(onResize);

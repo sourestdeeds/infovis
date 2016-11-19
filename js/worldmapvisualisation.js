@@ -2,12 +2,6 @@ var WorldMapVisualisation = function() {
 	var self = this;
 	this.tabID = '#worldmap';
 
-	//TODO: redraw when resized
-	//$('#worldmap-svg').resize(this.draw)
-	$(window).bind('resize', function() {
-		self.resize();
-	});
-
 	this.svg = d3.select('#worldmap-svg');
 	this.g = this.svg.append('g');
 	this.scale = 1
@@ -41,10 +35,10 @@ var WorldMapVisualisation = function() {
 
 	this.svg.call(this.zoom);
 
-  	self.resize()
 }
 
-WorldMapVisualisation.prototype.resize = function () {
+
+WorldMapVisualisation.prototype.draw = function () {
 	var self = this;
 
 	self.width = document.getElementById('worldmap').offsetWidth
@@ -59,11 +53,6 @@ WorldMapVisualisation.prototype.resize = function () {
 
 	self.path = d3.geo.path().projection(self.projection);
 	self.countriesDrawn = false;
-	self.draw();
-};
-
-WorldMapVisualisation.prototype.draw = function () {
-	var self = this;
 
 	d3.json('data/world-topo-min.json', function(error, world) {
 		self.drawMap(topojson.feature(world, world.objects.countries).features);
@@ -75,6 +64,7 @@ WorldMapVisualisation.prototype.drawMap = function (topo) {
 
 	if (!self.countriesDrawn) {
 		self.g.selectAll('.country').remove();
+
 
 		self.g.selectAll('.country').data(topo).enter().insert('path')
 			.attr('class', 'country')
