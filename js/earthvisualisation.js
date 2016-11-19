@@ -1,25 +1,22 @@
 var EarthVisualisation = function() {
 	this.tabID = '#earth';
 
-	this.MAX_DISTANCE = 10000;
-	// Use exponential scale for zooming
-	this.scaleMapper = d3.scale.log().domain([1,this.MAX_DISTANCE]).range([1,0]).invert;
-	// Scale is a value between 0 (zoomed out) and 1 (zoomed in)
-	this.scale = 0;
+	//On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
+	this.DEFAULT_SCALE = 1;
+	this.DEFAULT_SCALE_DISTANCE = 10000;
 
 	this.svg = d3.select('#earth-svg');
-	//TODO: redraw when resized
-	//$('#earth-svg').resize(this.draw)
 
 	var self = this
 	this.zoom = d3.behavior.zoom()
-		.scaleExtent([0.01,1])
+		.scaleExtent([0.01, 10000])
 		.on('zoom', function() {
-			self.rescale(d3.event.scale);
+			self._setPlanetScaledPositions();
 		})
-		.scale(0);
-
+		.scale(this.DEFAULT_SCALE);
 	this.svg.call(this.zoom);
+
+	//TODO: redraw when resized. Handled by VisualisationManager?
 }
 
 EarthVisualisation.prototype.draw = function () {
@@ -41,9 +38,9 @@ EarthVisualisation.prototype.draw = function () {
 };
 
 EarthVisualisation.prototype.rescale = function (scale) {
-	console.log(scale);
-	this.scale = scale;
-	this._setPlanetScaledPositions();
+	this.zoom.scale(scale);
+	// Trigger zoom event listeners
+	this.zoom.event(this.svg);
 };
 
 EarthVisualisation.prototype._setPlanetRotations = function () {
@@ -58,10 +55,12 @@ EarthVisualisation.prototype._setPlanetRotations = function () {
 };
 
 EarthVisualisation.prototype._setPlanetScaledPositions = function () {
+	console.log(this.zoom.scale());
+
 	var centerY = this._getSvgCenter().y;
 	var maxY = centerY - 10;
 	var scaler = d3.scale.linear()
-		.domain([0, this.scaleMapper(this.scale)])
+		.domain([0, this.DEFAULT_SCALE_DISTANCE / this.zoom.scale()])
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
 		.attr('cy', function(d) {return centerY + scaler(+d['st_dist'])});
