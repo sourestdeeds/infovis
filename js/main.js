@@ -2,15 +2,19 @@
  * Entrypoint.
  */
 function main() {
+	// Visualisation in global namespace for easy access while debugging
+	earthVisualisation = new EarthVisualisation();
+
     catchTabEvents();
     timeSlider.setup();
 
-	visualisationManager.addVisualisation(new EarthVisualisation());
+	visualisationManager.addVisualisation(earthVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
+	visualisationManager.addVisualisation(new WorldMapVisualisation());
 
 	dataHandler.onDataLoaded(function() {
 	    dataHandler.setRange(timeSlider.DEFAULT_RANGE.min, timeSlider.DEFAULT_RANGE.max);
-		visualisationManager.switchTo(''); // TODO put default active tab here
+		visualisationManager.switchTo('#worldmap'); // TODO put default active tab here
 	});
 }
 

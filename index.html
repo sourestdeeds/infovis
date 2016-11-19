@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8" />
 	<title>PlanetVis</title>
-	
+
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/classic-min.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/c3.min.css">
-	
+
 	<script src="js/libs/d3.v3.min.js"></script>
 	<script src="js/libs/c3.min.js"></script>
 	<script src="js/libs/jquery-3.1.1.min.js"></script>
@@ -16,11 +16,13 @@
 	<script src="js/libs/jquery.mousewheel.min.js"></script>
 	<script src="js/libs/jqrangeslider.js"></script>
 	<script src="js/libs/bootstrap.min.js"></script>
-	
+	<script src="js/libs/topojson.v1.min.js"></script>
+
 	<script src="js/datahandler.js"></script>
 	<script src="js/visualisationmanager.js"></script>
 	<script src="js/windowsizehandler.js"></script>
 	<script src="js/timeslider.js"></script>
+	<script src="js/worldmapvisualisation.js"></script>
 	<script src="js/earthvisualisation.js"></script>
 	<script src="js/stackedareaplot.js"></script>
 	<script src="js/main.js"></script>
@@ -53,7 +55,7 @@
 	<div>
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Discovery Locations</a></li>
+			<li role="presentation" class="active"><a href="#worldmap" aria-controls="worldmap" role="tab" data-toggle="tab">Discovery Locations</a></li>
 			<li role="presentation"><a href="#earth" aria-controls="earth" role="tab" data-toggle="tab">Earth</a></li>
 			<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
 			<li role="presentation"><a href="#stacked-area-plot" aria-controls="stacked-area-plot" role="tab" data-toggle="tab">Stacked Area Plot</a></li>
@@ -61,12 +63,13 @@
 
 		<!-- Tab panes -->
 		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane active" id="home">
-
+			<div role="tabpanel" class="tab-pane active" id="worldmap">
+				<svg id="worldmap-svg">
+				</svg>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="earth">
 				<svg id="earth-svg">
-					<circle cx="0" cy="0" r="20"></circle>
+					<circle class="earth" cx="0" cy="0" r="20"></circle>
 				</svg>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
