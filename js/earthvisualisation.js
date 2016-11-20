@@ -27,6 +27,8 @@ var EarthVisualisation = function() {
 		});
 
 	this._createSliders();
+
+	dataHandler.onDataLoaded(this._createLegend);
 }
 
 EarthVisualisation.prototype.draw = function () {
@@ -75,7 +77,7 @@ EarthVisualisation.prototype._setPlanetRotations = function () {
 };
 
 EarthVisualisation.prototype._setPlanetScaledPositions = function () {
-	$('#distance-slider').slider('value', this.distanceSliderScaler(this.zoom.scale()));
+	$('#earth-distance-slider').slider('value', this.distanceSliderScaler(this.zoom.scale()));
 	var centerY = this._getSvgCenter().y;
 	var maxY = centerY - 10;
 	var scaler = d3.scale.linear()
@@ -86,7 +88,7 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 };
 
 EarthVisualisation.prototype._setPlanetScales = function () {
-	$('#planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
+	$('#earth-planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
 	var scale = this.planetZoom.scale();
 	this.earth.attr('r', scale);
 	this.svg.selectAll('circle.planet')
@@ -110,12 +112,12 @@ EarthVisualisation.prototype._createSliders = function () {
 		.domain([0.1, 10000])
 		.range([0, 1]);
 
-	$('#distance-slider').slider({
+	$('#earth-distance-slider').slider({
 		min: 0,
 		step: 0.001,
 		max: 1
 	});
-	$('#distance-slider').on('slide', function(event, ui) {
+	$('#earth-distance-slider').on('slide', function(event, ui) {
 		self.rescale(self.distanceSliderScaler.invert(ui.value));
 	});
 
@@ -123,13 +125,23 @@ EarthVisualisation.prototype._createSliders = function () {
 		.domain([0.1, 10])
 		.range([0, 1]);
 
-	$('#planet-slider').slider({
+	$('#earth-planet-slider').slider({
 		min: 0,
 		step: 0.001,
 		max: 1
 	});
 
-	$('#planet-slider').on('slide', function(event, ui) {
+	$('#earth-planet-slider').on('slide', function(event, ui) {
 		self.rescalePlanets(self.planetSliderScaler.invert(ui.value));
 	});
+};
+
+EarthVisualisation.prototype._createLegend = function () {
+	var legendItems = d3.select('#earth-legend').selectAll('div')
+		.data(dataHandler.discoveryMethods)
+		.enter().append('div');
+	legendItems.classed('earth-legend-item', true);
+	legendItems.append('span')
+		.text(function(d) {return d;})
+		.style('background-color', function(d) {return dataHandler.discoveryMethodsColorMap(d)});
 };
