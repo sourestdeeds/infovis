@@ -1,6 +1,10 @@
-var DataHandler = function(dataFile) {
+var DataHandler = function(dataFile, locationsFile) {
 	this.dataFile = dataFile;
+	this.locationsFile = locationsFile;
+
 	this.dataLoaded = false;
+	this.locationsLoaded = false
+
 	this.data = [];
 	this.selectedData = [];
 	this.highlightedData = [];
@@ -8,6 +12,7 @@ var DataHandler = function(dataFile) {
 	this.discoveryMethodsColorMap = d3.scale.category10();
 	this.dataLoadedCallbackQueue = [];
 	this.currentRange = undefined;
+	this.locations = [];
 
 	this.parseData();
 };
@@ -22,14 +27,20 @@ DataHandler.prototype.parseData = function() {
 		self._createDiscoveryMethods();
 		self.dataLoaded = true;
 
-		self.dataLoadedCallbackQueue.forEach(function(callback) {
-		    callback();
-	    });
+		self._processCallbacks();
+	});
+
+	d3.text(this.locationsFile, function(csv) {
+		var csv = csv.replace(/^[#@][^\n]*\n/mg, '');
+		self.locations = d3.csv.parse(csv);
+		self.locationsLoaded = true;
+
+		self._processCallbacks();
 	});
 };
 
 DataHandler.prototype.onDataLoaded = function(callback) {
-	if (this.dataLoaded) {
+	if (this.dataLoaded && this.locationsLoaded) {
 		callback();
 	} else {
 		this.dataLoadedCallbackQueue.push(callback);
@@ -54,4 +65,12 @@ DataHandler.prototype._createDiscoveryMethods = function () {
 	this.discoveryMethodsColorMap.domain(this.discoveryMethods);
 };
 
-var dataHandler = new DataHandler('data/planets.csv');
+DataHandler.prototype._processCallbacks = function() {
+	if (this.dataLoaded && this.locationsLoaded) {
+		this.dataLoadedCallbackQueue.forEach(function(callback) {
+		    callback();
+	    });
+	}
+}
+
+var dataHandler = new DataHandler('data/planets.csv', 'data/observatory_locations.csv');
