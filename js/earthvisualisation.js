@@ -1,4 +1,5 @@
 var EarthVisualisation = function() {
+	var self = this
 	this.tabID = '#earth';
 
 	// On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
@@ -10,7 +11,6 @@ var EarthVisualisation = function() {
 	this.svg = d3.select('#earth-svg');
 	this.earth = this.svg.select('.earth');
 
-	var self = this
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 10000])
 		.scale(this.DEFAULT_SCALE)
@@ -27,15 +27,24 @@ var EarthVisualisation = function() {
 		});
 
 	this._createSliders();
+
+	this.discoveryMethodsSelection = {};
+	dataHandler.onDataLoaded(function() {self._createLegend()});
 }
 
 EarthVisualisation.prototype.draw = function () {
+	var self = this;
+
 	var center = this._getSvgCenter();
 
 	this.earth.attr('cx', center.x)
 		.attr('cy', center.y);
 
-	var planets = this.svg.selectAll('circle.planet').data(dataHandler.selectedData);
+	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
+		return self.discoveryMethodsSelection[element['pl_discmethod']];
+	});
+
+	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
@@ -75,7 +84,7 @@ EarthVisualisation.prototype._setPlanetRotations = function () {
 };
 
 EarthVisualisation.prototype._setPlanetScaledPositions = function () {
-	$('#distance-slider').slider('value', this.distanceSliderScaler(this.zoom.scale()));
+	$('#earth-distance-slider').slider('value', this.distanceSliderScaler(this.zoom.scale()));
 	var centerY = this._getSvgCenter().y;
 	var maxY = centerY - 10;
 	var scaler = d3.scale.linear()
@@ -86,7 +95,7 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 };
 
 EarthVisualisation.prototype._setPlanetScales = function () {
-	$('#planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
+	$('#earth-planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
 	var scale = this.planetZoom.scale();
 	this.earth.attr('r', scale);
 	this.svg.selectAll('circle.planet')
@@ -110,12 +119,12 @@ EarthVisualisation.prototype._createSliders = function () {
 		.domain([0.1, 10000])
 		.range([0, 1]);
 
-	$('#distance-slider').slider({
+	$('#earth-distance-slider').slider({
 		min: 0,
 		step: 0.001,
 		max: 1
 	});
-	$('#distance-slider').on('slide', function(event, ui) {
+	$('#earth-distance-slider').on('slide', function(event, ui) {
 		self.rescale(self.distanceSliderScaler.invert(ui.value));
 	});
 
@@ -123,13 +132,47 @@ EarthVisualisation.prototype._createSliders = function () {
 		.domain([0.1, 10])
 		.range([0, 1]);
 
-	$('#planet-slider').slider({
+	$('#earth-planet-slider').slider({
 		min: 0,
 		step: 0.001,
 		max: 1
 	});
 
-	$('#planet-slider').on('slide', function(event, ui) {
+	$('#earth-planet-slider').on('slide', function(event, ui) {
 		self.rescalePlanets(self.planetSliderScaler.invert(ui.value));
 	});
+};
+
+EarthVisualisation.prototype._createLegend = function () {
+	var self = this;
+
+	dataHandler.discoveryMethods.forEach(function(element) {
+		self.discoveryMethodsSelection[element] = true;
+	});
+
+	var legendItems = d3.select('#earth-legend').selectAll('div')
+		.data(dataHandler.discoveryMethods)
+		.enter().append('div');
+	legendItems.classed('earth-legend-item', true);
+	legendItems.append('span')
+		.classed('earth-legend-color-block', true)
+		.style('border-color', function(d) {return dataHandler.discoveryMethodsColorMap(d)})
+		.style('background-color', function(d) {
+			if (self.discoveryMethodsSelection[d])
+				return dataHandler.discoveryMethodsColorMap(d);
+			else
+				return 'white';
+	}).on('click', function(d) {
+		self.discoveryMethodsSelection[d] = !self.discoveryMethodsSelection[d];
+		d3.select('#earth-legend').selectAll('.earth-legend-color-block')
+			.style('background-color', function(d) {
+				if (self.discoveryMethodsSelection[d])
+					return dataHandler.discoveryMethodsColorMap(d);
+				else
+					return 'white';
+		});
+		self.draw();
+	});
+	legendItems.append('span')
+		.text(function(d) {return d;});
 };

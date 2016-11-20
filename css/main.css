@@ -49,3 +49,11 @@ footer {
 	top: 10px;
 	left: 10px;
 }
+
+.earth-legend-color-block {
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	margin-right: 5px;
+	border: 1px solid;
+}
