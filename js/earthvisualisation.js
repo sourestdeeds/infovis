@@ -1,4 +1,5 @@
 var EarthVisualisation = function() {
+	var self = this
 	this.tabID = '#earth';
 
 	// On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
@@ -10,7 +11,6 @@ var EarthVisualisation = function() {
 	this.svg = d3.select('#earth-svg');
 	this.earth = this.svg.select('.earth');
 
-	var self = this
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 10000])
 		.scale(this.DEFAULT_SCALE)
@@ -28,16 +28,23 @@ var EarthVisualisation = function() {
 
 	this._createSliders();
 
-	dataHandler.onDataLoaded(this._createLegend);
+	this.discoveryMethodsSelection = {};
+	dataHandler.onDataLoaded(function() {self._createLegend()});
 }
 
 EarthVisualisation.prototype.draw = function () {
+	var self = this;
+
 	var center = this._getSvgCenter();
 
 	this.earth.attr('cx', center.x)
 		.attr('cy', center.y);
 
-	var planets = this.svg.selectAll('circle.planet').data(dataHandler.selectedData);
+	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
+		return self.discoveryMethodsSelection[element['pl_discmethod']];
+	});
+
+	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
@@ -137,11 +144,35 @@ EarthVisualisation.prototype._createSliders = function () {
 };
 
 EarthVisualisation.prototype._createLegend = function () {
+	var self = this;
+
+	dataHandler.discoveryMethods.forEach(function(element) {
+		self.discoveryMethodsSelection[element] = true;
+	});
+
 	var legendItems = d3.select('#earth-legend').selectAll('div')
 		.data(dataHandler.discoveryMethods)
 		.enter().append('div');
 	legendItems.classed('earth-legend-item', true);
 	legendItems.append('span')
-		.text(function(d) {return d;})
-		.style('background-color', function(d) {return dataHandler.discoveryMethodsColorMap(d)});
+		.classed('earth-legend-color-block', true)
+		.style('border-color', function(d) {return dataHandler.discoveryMethodsColorMap(d)})
+		.style('background-color', function(d) {
+			if (self.discoveryMethodsSelection[d])
+				return dataHandler.discoveryMethodsColorMap(d);
+			else
+				return 'white';
+	}).on('click', function(d) {
+		self.discoveryMethodsSelection[d] = !self.discoveryMethodsSelection[d];
+		d3.select('#earth-legend').selectAll('.earth-legend-color-block')
+			.style('background-color', function(d) {
+				if (self.discoveryMethodsSelection[d])
+					return dataHandler.discoveryMethodsColorMap(d);
+				else
+					return 'white';
+		});
+		self.draw();
+	});
+	legendItems.append('span')
+		.text(function(d) {return d;});
 };
