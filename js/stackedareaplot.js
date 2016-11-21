@@ -64,7 +64,7 @@ StackedAreaPlot.prototype._discMethods = function(data) {
 
 StackedAreaPlot.prototype._hists = function(methods) {
     var hists = [];
-    var binCount = dataHandler.currentRange[1] - dataHandler.currentRange[0];
+    var binCount = dataHandler.currentRange[1] - dataHandler.currentRange[0] + 1;
 
     for (var method in methods) {
         if (methods.hasOwnProperty(method)) {
