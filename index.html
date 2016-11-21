@@ -6,6 +6,7 @@
 
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/libs/jquery-ui.min.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/classic-min.css">
 	<link rel="stylesheet" type="text/css" href="css/libs/c3.min.css">
 
@@ -30,28 +31,6 @@
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 </head>
 <body onload="main()">
-	<!-- <h1>D3 Test</h1>
-	<p>
-		Test
-	</p>
-	<div class="svg-container">
-		<svg id="planets" viewBox="-100 -100 200 200" preserveAspectRatio="xMinYMin meet" class="svg-content">
-			<circle cx="0" cy="0" r="5" fill="orange"></circle>
-		</svg>
-	</div>
-
-	<div class="svg-container">
-		<svg id="plot" viewBox="0 0 1000 1000" preserveAspectRatio="xMinYMin meet" class="svg-content">
-		</svg>
-	</div>
-
-	<div class="svg-container">
-		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" class="svg-content">
-			<circle cx="500" cy="500" r="500"></circle>
-		</svg>
-	</div> -->
-
-
 	<div>
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" role="tablist">
@@ -69,8 +48,31 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="earth">
 				<svg id="earth-svg">
-					<circle class="earth" cx="0" cy="0" r="20"></circle>
+					<circle class="earth" cx="0" cy="0" r="1" fill="blue"></circle>
 				</svg>
+				<div class="toolbar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#earth-tools" aria-expanded="false" aria-controls="earth-tools">
+								<span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+							</button>
+							Tools
+						</h3>
+					</div>
+					<div id="earth-tools" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h4>Distance Scale:</h4>
+								<div id="earth-distance-slider"></div>
+								<h4>Planet Scale:</h4>
+								<div id="earth-planet-slider"></div>
+								<div id="earth-legend">
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="messages">..eeee.</div>
 			<div role="tabpanel" class="tab-pane" id="stacked-area-plot">

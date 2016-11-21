@@ -34,7 +34,6 @@ var WorldMapVisualisation = function() {
 
 
 	this.svg.call(this.zoom);
-
 }
 
 
@@ -85,19 +84,17 @@ WorldMapVisualisation.prototype.drawPoints = function() {
 	var self = this;
 
 	d3.selectAll('.gpoint').remove();
-	d3.csv('data/observatory_locations.csv', function(err, observatories) {
-		var counts  = d3.nest()
-							  .key(function(d) { return d.pl_facility; })
-							  .rollup(function(v) { return v.length; })
-							  .entries(dataHandler.selectedData);
 
-		counts.forEach(function(count) {
-			var loc = self._findLocation(count.key, observatories)
-			if (loc !== null) {
-				self.drawPoint(loc.lon, loc.lat, count.values);
-			}
-		});
+	var counts  = d3.nest()
+					.key(function(d) { return d.pl_facility; })
+					.rollup(function(v) { return v.length; })
+					.entries(dataHandler.selectedData);
 
+	counts.forEach(function(count) {
+		var loc = self._findLocation(count.key, dataHandler.locations)
+		if (loc !== null) {
+			self.drawPoint(loc.lon, loc.lat, count.values);
+		}
 	});
 }
 
