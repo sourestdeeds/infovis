@@ -73,4 +73,4 @@ DataHandler.prototype._processCallbacks = function() {
 	}
 }
 
-var dataHandler = new DataHandler('data/planets.csv', 'data/observatory_locations.csv');
+var dataHandler = new DataHandler('data/planets.csv', 'data/locations.csv');
