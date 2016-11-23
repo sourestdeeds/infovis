@@ -96,32 +96,40 @@ WorldMapVisualisation.prototype.drawPoints = function() {
 
 	for (var location in buckets) {
 		if (buckets.hasOwnProperty(location)) {
-			var loc = buckets[location];
-			self.drawPoint(loc.coords.lon, loc.coords.lat, loc.values.length, location);
+			self.drawPoint(location, buckets[location]);
 		}
 	}
 }
 
-WorldMapVisualisation.prototype.drawPoint = function(lat, lon, size, name) {
-	var gpoint = this.g.append('g').attr('class', 'gpoint');
-	var x = this.projection([lat,lon])[0];
-	var y = this.projection([lat,lon])[1];
+WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
+	var self = this;
+
+	var lon = bucket.coords.lon;
+	var lat = bucket.coords.lat;
+	var size = bucket.values.length;
+
+	var gpoint = self.g.append('g').attr('class', 'gpoint');
+	var x = self.projection([lon,lat])[0];
+	var y = self.projection([lon,lat])[1];
 
 
 	gpoint.append('svg:circle')
 		.attr('cx', x)
 		.attr('cy', y)
 		.attr('class', 'point')
-		.attr('r', 5*Math.log(size) / Math.sqrt(this.scale) )
+		.attr('r', 5*Math.log(size) / Math.sqrt(self.scale) )
 		.attr('fill', '#B80004')
 		.attr('stroke', '#B80004')
-		.attr('stroke-width', 2 / this.scale)
+		.attr('stroke-width', 2 / self.scale)
 		.attr('fill-opacity', 0.3)
 		.on('mouseover', function() {
 			d3.select(this).attr('stroke', '#348D61').attr('fill', '#348D61');
 		})
 		.on('mouseout', function() {
 			d3.select(this).attr('stroke', '#B80004').attr('fill', '#B80004');
+		})
+		.on('click', function() {
+			self.drawPieChart(name, bucket);
 		});
 }
 
@@ -172,4 +180,53 @@ WorldMapVisualisation.prototype._createMapping = function() {
 	});
 
 	return mapping;
+}
+
+
+WorldMapVisualisation.prototype._findTelescopes = function(bucket) {
+	return bucket.values.map(function(entry) {
+		return entry.pl_telescope;
+	});
+}
+
+WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
+	var self = this;
+
+	d3.select('#detail-pie-chart').remove();
+	d3.select('#pie-chart-wrapper').style('display', 'block');
+	d3.select('#pie-chart-close').on('click', function() {
+		d3.select('#pie-chart-wrapper').style('display', 'none');
+	});
+	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart');
+	d3.select('#pie-chart-title span').text(name);
+
+	var groups = d3.nest()
+					.key(function(d) { return d; })
+					.rollup(function(v) { return v.length; })
+					.entries(self._findTelescopes(bucket))
+					.map(function(entry) {
+						return [entry.key, entry.values]
+					});
+
+
+	var chart = c3.generate({
+		bindto: '#detail-pie-chart',
+		size: {
+			height: 200
+		},
+		legend: {
+			position: 'right'
+		},
+		data: {
+			type: 'pie',
+			columns: groups
+		},
+		pie: {
+			label: {
+				format: function(value, ratio, id) {
+					return value;
+				}
+			}
+		}
+	});
 }
