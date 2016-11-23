@@ -97,9 +97,15 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 EarthVisualisation.prototype._setPlanetScales = function () {
 	$('#earth-planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
 	var scale = this.planetZoom.scale();
+	var usePlanetScale = $('#earth-planet-scale-checkbox').prop('checked');
 	this.earth.attr('r', scale);
 	this.svg.selectAll('circle.planet')
-		.attr('r', function(d) {return +d['pl_rade'] * scale});
+		.attr('r', function(d) {
+			var radius = 10;
+			if (usePlanetScale)
+				radius = +d['pl_rade'];
+			return  radius * scale;
+		});
 };
 
 EarthVisualisation.prototype._getSvgSize = function () {
@@ -141,6 +147,10 @@ EarthVisualisation.prototype._createSliders = function () {
 	$('#earth-planet-slider').on('slide', function(event, ui) {
 		self.rescalePlanets(self.planetSliderScaler.invert(ui.value));
 	});
+
+	$('#earth-planet-scale-checkbox').change(function() {
+		self._setPlanetScales();
+	})
 };
 
 EarthVisualisation.prototype._createLegend = function () {
