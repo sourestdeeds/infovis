@@ -79,14 +79,18 @@ EarthVisualisation.prototype._setPlanetColors = function () {
 };
 
 EarthVisualisation.prototype._setPlanetRotations = function () {
-	//TODO: base rotation on something else?
 	var self = this;
+
 	var center = this._getSvgCenter();
+	var disablePieChart = $('#earth-planet-pie-checkbox').prop('checked');
+
 	d3.selectAll('circle.planet')
 		.attr('transform', function(d) {
 			var discMethod = d['pl_discmethod'];
 			var randomRotation = (+d['rowid']*443 % 360)/360.0;
 			var rotation = self.discoveryMethodAngle[discMethod] * randomRotation + self.cumulativeDiscoveryMethodAngle[discMethod];
+			if (disablePieChart)
+				rotation = randomRotation * 360;
 			return 'rotate(' + rotation + ',' + center.x + ',' + center.y + ')';
 		});
 };
@@ -158,6 +162,10 @@ EarthVisualisation.prototype._createSliders = function () {
 
 	$('#earth-planet-scale-checkbox').change(function() {
 		self._setPlanetScales();
+	})
+
+	$('#earth-planet-pie-checkbox').change(function() {
+		self.draw();
 	})
 };
 
@@ -235,6 +243,10 @@ EarthVisualisation.prototype._createPieChart = function () {
 	// TODO: reuse old pie instead of deleting
 	this.svg.select('#pie').remove();
 
+	var disablePieChart = $('#earth-planet-pie-checkbox').prop('checked');
+	if (disablePieChart)
+		return;
+		
 	var pie = this.svg.append('g')
 		.attr('id', 'pie')
 		.attr('transform', 'translate(' + center.x + ',' + center.y + ')');
