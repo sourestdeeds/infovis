@@ -44,6 +44,8 @@ EarthVisualisation.prototype.draw = function () {
 		return self.discoveryMethodsSelection[element['pl_discmethod']];
 	});
 
+	this._calcDiscoveryMethodDistribution(selectedPlanets);
+
 	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
@@ -56,6 +58,7 @@ EarthVisualisation.prototype.draw = function () {
 	this._setPlanetScales();
 	this._setPlanetRotations();
 	this._setPlanetColors();
+	this._createPieChart();
 };
 
 EarthVisualisation.prototype.rescale = function (scale) {
@@ -77,10 +80,15 @@ EarthVisualisation.prototype._setPlanetColors = function () {
 
 EarthVisualisation.prototype._setPlanetRotations = function () {
 	//TODO: base rotation on something else?
-
+	var self = this;
 	var center = this._getSvgCenter();
 	d3.selectAll('circle.planet')
-		.attr('transform', function(d) {return 'rotate(' + +d['rowid']*13 % 360 + ',' + center.x + ',' + center.y + ')'});
+		.attr('transform', function(d) {
+			var discMethod = d['pl_discmethod'];
+			var randomRotation = (+d['rowid']*443 % 360)/360.0;
+			var rotation = self.discoveryMethodAngle[discMethod] * randomRotation + self.cumulativeDiscoveryMethodAngle[discMethod];
+			return 'rotate(' + rotation + ',' + center.x + ',' + center.y + ')';
+		});
 };
 
 EarthVisualisation.prototype._setPlanetScaledPositions = function () {
@@ -91,7 +99,7 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 		.domain([0, this.DEFAULT_SCALE_DISTANCE / this.zoom.scale()])
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
-		.attr('cy', function(d) {return centerY + scaler(+d['st_dist'])});
+		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])});
 };
 
 EarthVisualisation.prototype._setPlanetScales = function () {
@@ -185,4 +193,59 @@ EarthVisualisation.prototype._createLegend = function () {
 	});
 	legendItems.append('span')
 		.text(function(d) {return d;});
+};
+
+EarthVisualisation.prototype._calcDiscoveryMethodDistribution = function (planets) {
+	var self = this;
+
+	var counts = {};
+	dataHandler.discoveryMethods.forEach(function(discMethod) {counts[discMethod] = 0;});
+	planets.forEach(function(planet) {
+		var discMethod = planet['pl_discmethod']
+		counts[discMethod] += 1;
+	});
+
+	var total = 0;
+	for(var key in counts) {
+		total += counts[key];
+	}
+
+	this.discoveryMethodAngle = {};
+	this.cumulativeDiscoveryMethodAngle = {};
+	var c = 0;
+	dataHandler.discoveryMethods.forEach(function(discMethod) {
+		var angle = counts[discMethod] / total * 360;
+		self.discoveryMethodAngle[discMethod] = angle;
+		self.cumulativeDiscoveryMethodAngle[discMethod] = c;
+		c += angle;
+	});
+};
+
+EarthVisualisation.prototype._createPieChart = function () {
+	var self = this;
+
+	var center = this._getSvgCenter();
+
+	var arc = d3.svg.arc()
+		.outerRadius(center.y - 20)
+		.startAngle(function(discMethod) {return 0.0174533 * self.cumulativeDiscoveryMethodAngle[discMethod]})
+		.endAngle(function(discMethod) {return 0.0174533 * (self.cumulativeDiscoveryMethodAngle[discMethod] + self.discoveryMethodAngle[discMethod])});
+
+	// Remove old pie for easy code.
+	// TODO: reuse old pie instead of deleting
+	this.svg.select('#pie').remove();
+
+	var pie = this.svg.append('g')
+		.attr('id', 'pie')
+		.attr('transform', 'translate(' + center.x + ',' + center.y + ')');
+
+	var pie = pie.selectAll('.arc').data(dataHandler.discoveryMethods);
+	pie.exit().remove();
+	pie.enter().append('g')
+		.classed('arc', true);
+
+	pie.append('path')
+		.attr('d', arc)
+		.style('fill', function(discMethod) {return dataHandler.discoveryMethodsColorMap(discMethod)})
+		.style('opacity', 0.25);
 };
