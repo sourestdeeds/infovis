@@ -61,6 +61,8 @@ WorldMapVisualisation.prototype.draw = function () {
 WorldMapVisualisation.prototype.drawMap = function (topo) {
 	var self = this;
 
+	d3.select('#pie-chart-wrapper').style('display', 'none');
+
 	if (!self.countriesDrawn) {
 		self.g.selectAll('.country').remove();
 
@@ -85,41 +87,150 @@ WorldMapVisualisation.prototype.drawPoints = function() {
 
 	d3.selectAll('.gpoint').remove();
 
-	var counts  = d3.nest()
-					.key(function(d) { return d.pl_facility; })
-					.rollup(function(v) { return v.length; })
-					.entries(dataHandler.selectedData);
+	var buckets = self._createBuckets();
+	var mapping = self._createMapping();
 
-	counts.forEach(function(count) {
-		var loc = self._findLocation(count.key, dataHandler.locations)
-		if (loc !== null) {
-			self.drawPoint(loc.lon, loc.lat, count.values);
+	dataHandler.selectedData.forEach(function(entry) {
+		if (entry.pl_facility in mapping) {
+			buckets[mapping[entry.pl_facility]].values.push(entry);
 		}
 	});
+
+	for (var location in buckets) {
+		if (buckets.hasOwnProperty(location)) {
+			self.drawPoint(location, buckets[location]);
+		}
+	}
 }
 
-WorldMapVisualisation.prototype.drawPoint = function(lat, lon, size) {
-	var gpoint = this.g.append('g').attr('class', 'gpoint');
-	var x = this.projection([lat,lon])[0];
-	var y = this.projection([lat,lon])[1];
+WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
+	var self = this;
+
+	var lon = bucket.coords.lon;
+	var lat = bucket.coords.lat;
+	var size = bucket.values.length;
+
+	var gpoint = self.g.append('g').attr('class', 'gpoint');
+	var x = self.projection([lon,lat])[0];
+	var y = self.projection([lon,lat])[1];
+
+	if (size === 0)
+		return;
 
 	gpoint.append('svg:circle')
 		.attr('cx', x)
 		.attr('cy', y)
 		.attr('class', 'point')
-		.attr('r', 5*Math.log(size) / Math.sqrt(this.scale) )
+		.attr('r', 5*Math.log(size) / Math.sqrt(self.scale) )
 		.attr('fill', '#B80004')
 		.attr('stroke', '#B80004')
-		.attr('stroke-width', 2 / this.scale)
-		.attr('fill-opacity', 0.5);
+		.attr('stroke-width', 2 / self.scale)
+		.attr('fill-opacity', 0.3)
+		.on('mouseover', function() {
+			d3.select(this).attr('stroke', '#348D61').attr('fill', '#348D61');
+		})
+		.on('mouseout', function() {
+			d3.select(this).attr('stroke', '#B80004').attr('fill', '#B80004');
+		})
+		.on('click', function() {
+			self.drawPieChart(name, bucket);
+		});
 }
 
-WorldMapVisualisation.prototype._findLocation = function(name, locations) {
-	for (var i = 0; i < locations.length; i++) {
-		if (locations[i].name.indexOf(name) !== -1) {
-			return locations[i];
+WorldMapVisualisation.prototype._createBuckets = function() {
+	var self = this;
+
+	var locations = self._unique(dataHandler.locations.map(function(entry) {
+		return entry.name
+	}));
+
+	var buckets = {};
+
+	locations.forEach(function(name) {
+		buckets[name] = {
+			coords: self._findCoordinates(name),
+			values: []
+		}
+	});
+
+	return buckets;
+}
+
+WorldMapVisualisation.prototype._unique = function(array) {
+    var seen = {};
+    return array.filter(function(item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+    });
+}
+
+WorldMapVisualisation.prototype._findCoordinates = function(name) {
+	for (var i = 0; i < dataHandler.locations.length; i++) {
+		if (dataHandler.locations[i].name.indexOf(name) !== -1) {
+			return {
+				lat: dataHandler.locations[i].lat, 
+				lon: dataHandler.locations[i].lon
+			};
 		}
 	}
 
 	return null;
+}
+
+WorldMapVisualisation.prototype._createMapping = function() {
+	var mapping = {};
+
+	dataHandler.locations.forEach(function(location) {
+		mapping[location.disc_location] = location.name;
+	});
+
+	return mapping;
+}
+
+
+WorldMapVisualisation.prototype._findTelescopes = function(bucket) {
+	return bucket.values.map(function(entry) {
+		return entry.pl_telescope;
+	});
+}
+
+WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
+	var self = this;
+
+	d3.select('#detail-pie-chart').remove();
+	d3.select('#pie-chart-wrapper').style('display', 'block');
+	d3.select('#pie-chart-close').on('click', function() {
+		d3.select('#pie-chart-wrapper').style('display', 'none');
+	});
+	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart');
+	d3.select('#pie-chart-title span').text(name);
+
+	var groups = d3.nest()
+					.key(function(d) { return d; })
+					.rollup(function(v) { return v.length; })
+					.entries(self._findTelescopes(bucket))
+					.map(function(entry) {
+						return [entry.key, entry.values]
+					});
+
+
+	var chart = c3.generate({
+		bindto: '#detail-pie-chart',
+		size: {
+			height: 200
+		},
+		legend: {
+			position: 'right'
+		},
+		data: {
+			type: 'pie',
+			columns: groups
+		},
+		pie: {
+			label: {
+				format: function(value, ratio, id) {
+					return value;
+				}
+			}
+		}
+	});
 }
