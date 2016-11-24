@@ -61,6 +61,8 @@ WorldMapVisualisation.prototype.draw = function () {
 WorldMapVisualisation.prototype.drawMap = function (topo) {
 	var self = this;
 
+	d3.select('#pie-chart-wrapper').style('display', 'none');
+
 	if (!self.countriesDrawn) {
 		self.g.selectAll('.country').remove();
 
@@ -112,6 +114,8 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 	var x = self.projection([lon,lat])[0];
 	var y = self.projection([lon,lat])[1];
 
+	if (size === 0)
+		return;
 
 	gpoint.append('svg:circle')
 		.attr('cx', x)
