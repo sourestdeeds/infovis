@@ -1,6 +1,8 @@
 var WorldMapVisualisation = function() {
 	var self = this;
 	this.tabID = '#worldmap';
+	
+	this.MAX_LABEL_LENGTH = 35;
 
 	this.svg = d3.select('#worldmap-svg');
 	this.g = this.svg.append('g');
@@ -204,10 +206,21 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart');
 	d3.select('#pie-chart-title span').text(name);
 
+    var telescopes = self._findTelescopes(bucket);
+    var truncatedTelescopes = [];
+    
+    telescopes.forEach(function(entry) {
+        if (entry.length > self.MAX_LABEL_LENGTH) {
+            truncatedTelescopes.push(entry.substring(0, self.MAX_LABEL_LENGTH - 3) + '...');
+        } else {
+            truncatedTelescopes.push(entry);
+        }
+    });
+
 	var groups = d3.nest()
 					.key(function(d) { return d; })
 					.rollup(function(v) { return v.length; })
-					.entries(self._findTelescopes(bucket))
+					.entries(truncatedTelescopes)
 					.map(function(entry) {
 						return [entry.key, entry.values]
 					});
