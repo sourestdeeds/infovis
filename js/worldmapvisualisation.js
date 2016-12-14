@@ -2,7 +2,7 @@ var WorldMapVisualisation = function() {
 	var self = this;
 	this.tabID = '#worldmap';
 	
-	this.MAX_LABEL_LENGTH = 20;
+	this.MAX_LABEL_LENGTH = 35;
 
 	this.svg = d3.select('#worldmap-svg');
 	this.g = this.svg.append('g');
