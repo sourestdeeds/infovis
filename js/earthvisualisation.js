@@ -28,6 +28,8 @@ var EarthVisualisation = function() {
 
 	this._createSliders();
 
+	this._createScaleIndications();
+
 	this.discoveryMethodsSelection = {};
 	dataHandler.onDataLoaded(function() {self._createLegend()});
 }
@@ -54,6 +56,15 @@ EarthVisualisation.prototype.draw = function () {
 		.attr('fill', 'black')
 		.attr('opacity', '0.5')
 		.attr('r', 1);
+
+	this.scaleIndications
+		.attr('cx', center.x)
+		.attr('cy', center.y);
+
+	this.scaleIndicationLabels
+	.attr('x', center.x)
+
+
 	this._setPlanetScaledPositions();
 	this._setPlanetScales();
 	this._setPlanetRotations();
@@ -104,6 +115,12 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
 		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])});
+	this.scaleIndications
+		.attr('opacity', function(d) {return (scaler(d) < 20)? 0 : 1})
+		.attr('r', function(d) {return scaler(d)});
+	this.scaleIndicationLabels
+		.text(function(d) {return (scaler(d) < 20)? '': Math.round(d) + ' pc'})
+		.attr('y', function(d) {return centerY - scaler(d)});
 };
 
 EarthVisualisation.prototype._setPlanetScales = function () {
@@ -246,7 +263,7 @@ EarthVisualisation.prototype._createPieChart = function () {
 	var disablePieChart = $('#earth-planet-pie-checkbox').prop('checked');
 	if (disablePieChart)
 		return;
-		
+
 	var pie = this.svg.append('g')
 		.attr('id', 'pie')
 		.attr('transform', 'translate(' + center.x + ',' + center.y + ')');
@@ -260,4 +277,22 @@ EarthVisualisation.prototype._createPieChart = function () {
 		.attr('d', arc)
 		.style('fill', function(discMethod) {return dataHandler.discoveryMethodsColorMap(discMethod)})
 		.style('opacity', 0.25);
+};
+
+EarthVisualisation.prototype._createScaleIndications = function () {
+	var data = [10 ** 1, 10 ** 1.5, 10 ** 2, 10 ** 2.5, 10 ** 3, 10 ** 3.5, 10 ** 4]
+	this.scaleIndications = this.svg.selectAll('circle.scale-indications').data(data);
+	this.scaleIndications.enter().append('circle');
+	this.scaleIndications.classed('scale-indications', true)
+		.attr('stroke', '#DDDDDD')
+		.attr('stroke-width', 1)
+		.attr('opacity', 0.5)
+		.attr('fill', 'none');
+	this.scaleIndicationLabels = this.svg.selectAll('text.scale-indication-labels').data(data);
+	this.scaleIndicationLabels.enter().append('text');
+	this.scaleIndicationLabels.classed('scale-indication-labels', true)
+		.text(function(d) {return Math.round(d) + ' pc'})
+		.attr('fill', 'gray')
+		.attr('dy', -3)
+		.attr('text-anchor', 'middle');
 };
