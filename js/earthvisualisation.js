@@ -38,6 +38,7 @@ EarthVisualisation.prototype.draw = function () {
 	var self = this;
 
 	var center = this._getSvgCenter();
+	var size = this._getSvgSize();
 
 	this.earth.attr('cx', center.x)
 		.attr('cy', center.y);
@@ -62,8 +63,10 @@ EarthVisualisation.prototype.draw = function () {
 		.attr('cy', center.y);
 
 	this.scaleIndicationLabels
-	.attr('x', center.x)
+		.attr('x', center.x);
 
+	this.planetScaleIndications
+		.attr('transform', function(d) {return 'translate(0, ' + (size.height -  d.bottomOffset) + ')'});
 
 	this._setPlanetScaledPositions();
 	this._setPlanetScales();
@@ -135,6 +138,17 @@ EarthVisualisation.prototype._setPlanetScales = function () {
 				radius = +d['pl_rade'];
 			return  radius * scale;
 		});
+
+	this.planetScaleIndications
+		.attr('style', function(d) {
+			if (!usePlanetScale || d.radius * scale < 3 || d.radius * scale > 50)
+				return 'visibility:hidden';
+			else
+				return 'visibility:visible';
+		});
+
+	this.planetScaleIndications.selectAll('circle')
+		.attr('r', function(d) {return d.radius * scale})
 };
 
 EarthVisualisation.prototype._getSvgSize = function () {
@@ -295,4 +309,19 @@ EarthVisualisation.prototype._createScaleIndications = function () {
 		.attr('fill', 'gray')
 		.attr('dy', -3)
 		.attr('text-anchor', 'middle');
+
+	var planetData = [{bottomOffset: 100, name: 'Earth', radius: 1}, {bottomOffset: 30, name: 'Jupiter', radius: 11.209}];
+	this.planetScaleIndications = this.svg.selectAll('g.planet-scale-indications').data(planetData);
+	this.planetScaleIndications.enter().append('g');
+	this.planetScaleIndications.append('circle')
+		.attr('r', function(d) {return d.radius})
+		.attr('cx', 50)
+		.attr('cy', 0)
+		.attr('fill', '#AAAAAA');
+	this.planetScaleIndications.append('text')
+		.text(function(d) {return d.name})
+		.attr('x', 100)
+		.attr('font-size', 18)
+		.attr('dy', 7)
+		.attr('fill', 'gray');
 };
