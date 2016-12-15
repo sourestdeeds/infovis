@@ -3,7 +3,7 @@ var EarthVisualisation = function() {
 	this.tabID = '#earth';
 
 	// On default scale, half the height will represent DEFAULT_SCALE_DISTANCE pc.
-	this.DEFAULT_SCALE = 3.1;
+	this.DEFAULT_SCALE = 2.5;
 	this.DEFAULT_SCALE_DISTANCE = 10000;
 
 	this.DEFAULT_PLANET_SCALE = 0.3;
@@ -280,7 +280,7 @@ EarthVisualisation.prototype._createPieChart = function () {
 };
 
 EarthVisualisation.prototype._createScaleIndications = function () {
-	var data = [10 ** 1, 10 ** 1.5, 10 ** 2, 10 ** 2.5, 10 ** 3, 10 ** 3.5, 10 ** 4]
+	var data = [Math.pow(10,1),Math.pow(10,1.5),Math.pow(10,2),Math.pow(10,2.5),Math.pow(10,3),Math.pow(10,3.5),Math.pow(10,4)]
 	this.scaleIndications = this.svg.selectAll('circle.scale-indications').data(data);
 	this.scaleIndications.enter().append('circle');
 	this.scaleIndications.classed('scale-indications', true)
