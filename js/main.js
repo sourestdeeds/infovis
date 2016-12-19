@@ -4,11 +4,13 @@
 function main() {
 	// Visualisation in global namespace for easy access while debugging
 	earthVisualisation = new EarthVisualisation();
+	temperatureVisualisation = new TemperatureVisualisation();
 
     catchTabEvents();
     timeSlider.setup();
 
 	visualisationManager.addVisualisation(earthVisualisation);
+	visualisationManager.addVisualisation(temperatureVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 	visualisationManager.addVisualisation(new WorldMapVisualisation());
 
