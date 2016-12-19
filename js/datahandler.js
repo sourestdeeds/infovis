@@ -9,7 +9,10 @@ var DataHandler = function(dataFile, locationsFile) {
 	this.selectedData = [];
 	this.highlightedData = [];
 	this.discoveryMethods = [];
-	this.discoveryMethodsColorMap = d3.scale.category10();
+
+
+	this.discoveryMethodsColorMap = d3.scale.ordinal().range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#cfa36b', '#bcbd22', '#17becf']);
+	
 	this.dataLoadedCallbackQueue = [];
 	this.currentRange = undefined;
 	this.locations = [];
