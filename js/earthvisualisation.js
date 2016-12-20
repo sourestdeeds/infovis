@@ -88,7 +88,7 @@ EarthVisualisation.prototype.rescalePlanets = function (scale) {
 };
 
 EarthVisualisation.prototype._setPlanetColors = function () {
-	d3.selectAll('circle.planet')
+	this.svg.selectAll('circle.planet')
 		.attr('fill', function(d) {return dataHandler.discoveryMethodsColorMap(d['pl_discmethod'])});
 };
 
@@ -98,7 +98,7 @@ EarthVisualisation.prototype._setPlanetRotations = function () {
 	var center = this._getSvgCenter();
 	var disablePieChart = $('#earth-planet-pie-checkbox').prop('checked');
 
-	d3.selectAll('circle.planet')
+	this.svg.selectAll('circle.planet')
 		.attr('transform', function(d) {
 			var discMethod = d['pl_discmethod'];
 			var randomRotation = (+d['rowid']*443 % 360)/360.0;
