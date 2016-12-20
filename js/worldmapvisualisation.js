@@ -43,6 +43,12 @@ var WorldMapVisualisation = function() {
     			.scaleExtent([1, 9])
     			.on('zoom', function() {
 				}));
+
+	dataHandler.onDataLoaded(function() {
+		self.mapping = self._createMapping();
+		self.buckets = self._createBuckets();
+		self.spaceBuckets = self._createSpaceBuckets();
+	});
 }
 
 
@@ -74,6 +80,7 @@ WorldMapVisualisation.prototype.drawMap = function (topo) {
 	var self = this;
 
 	d3.select('#pie-chart-wrapper').style('display', 'none');
+	self.svg.style('background-color', '#A1B8E5');
 
 	if (!self.countriesDrawn) {
 		self.g.selectAll('.country').remove();
@@ -85,8 +92,8 @@ WorldMapVisualisation.prototype.drawMap = function (topo) {
 			.attr('id', function(d,i) { return d.id; })
 			.attr('title', function(d,i) { return d.properties.name; })
 			.attr('stroke-width', 0.5 / self.scale)
-			.attr('stroke', '#FFFFFF')
-			.style('fill', function(d, i) { return '#A1B8E5' /* d.properties.color; */ });
+			.attr('stroke', '#A1B8E5')
+			.style('fill', function(d, i) { return '#FFFFFF' /* d.properties.color; */ });
 
 		self.countriesDrawn = true;
 	}
@@ -99,23 +106,13 @@ WorldMapVisualisation.prototype.drawPoints = function() {
 
 	d3.selectAll('.gpoint').remove();
 
-	var buckets = self._createBuckets();
-	var mapping = self._createMapping();
-
-	dataHandler.selectedData.forEach(function(entry) {
-		if (entry.pl_facility in mapping) {
-			buckets[mapping[entry.pl_facility]].values.push(entry);
-		}
-	});
-
-	for (var location in buckets) {
-		if (buckets.hasOwnProperty(location)) {
-			self.drawPoint(location, buckets[location]);
+	for (var location in self.buckets) {
+		if (self.buckets.hasOwnProperty(location)) {
+			self.drawPoint(location, self.buckets[location]);
 		}
 	}
 
-	var spaceTelescopes = self._findSpaceTelescopes();
-	self.drawSpaceTelescopes(spaceTelescopes);
+	self.drawSpaceTelescopes(self.spaceBuckets);
 }
 
 WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
@@ -148,7 +145,7 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 			d3.select(this).attr('stroke', '#B80004').attr('fill', '#B80004');
 		})
 		.on('click', function() {
-			self.drawPieChart(name, bucket);
+			self.drawPieCharts(name, bucket);
 		});
 }
 
@@ -195,7 +192,7 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
 				})
 				.on('click', function() {
 					var bucket = {coords: {}, values: telescope}
-					self.drawPieChart(name, bucket);
+					self.drawPieCharts(name, bucket);
 				});
 
 				gpoint.append('svg:text')
@@ -229,10 +226,16 @@ WorldMapVisualisation.prototype._createBuckets = function() {
 		}
 	});
 
+	dataHandler.selectedData.forEach(function(entry) {
+		if (entry.pl_facility in self.mapping) {
+			buckets[self.mapping[entry.pl_facility]].values.push(entry);
+		}
+	});
+
 	return buckets;
 }
 
-WorldMapVisualisation.prototype._findSpaceTelescopes = function() {
+WorldMapVisualisation.prototype._createSpaceBuckets = function() {
 	var buckets = {
 		'Kepler' : [],
 		'CoRoT' : [],
@@ -291,26 +294,14 @@ WorldMapVisualisation.prototype._findDiscoveryMethods = function(bucket) {
 	});
 }
 
-WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
+WorldMapVisualisation.prototype.drawPieChartTelescopes = function(name, bucket) {
 	var self = this;
 
-	d3.select('#detail-pie-chart').remove();
-	d3.select('#pie-chart-wrapper').style('display', 'block');
-	d3.select('#pie-chart-close').on('click', function() {
-		d3.select('#pie-chart-wrapper').style('display', 'none');
-	});
 	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart-telescopes');
-	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart-discovery');
-	d3.select('#pie-chart-title span').text(name);
-
-	$('#pie-chart-wrapper').width(self.svg.attr('width')-50);
 	$('#detail-pie-chart-telescopes').width(self.svg.attr('width')/2-50);
-	$('#detail-pie-chart-discovery').width(self.svg.attr('width')/2-50);
 
     var telescopes = self._findTelescopes(bucket);
-    var discMethods = self._findDiscoveryMethods(bucket);
     var truncatedTelescopes = [];
-    
     telescopes.forEach(function(entry) {
         if (entry.length > self.MAX_LABEL_LENGTH) {
             truncatedTelescopes.push(entry.substring(0, self.MAX_LABEL_LENGTH - 3) + '...');
@@ -326,24 +317,6 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 					.map(function(entry) {
 						return [entry.key, entry.values]
 					});
-
-	var discMethodGroups = d3.nest()
-					.key(function(d) { return d; })
-					.rollup(function(v) { return v.length; })
-					.entries(discMethods)
-					.map(function(entry) {
-						return [entry.key, entry.values]
-					});
-
-	var methods = dataHandler.discoveryMethodsColorMap.domain()
-	var colors = dataHandler.discoveryMethodsColorMap.range()
-	var colormap = {}
-	methods.forEach(function(method, index) {
-		colormap[method] = colors[index];
-	});
-
-	console.log(colormap);
-
 
 	var chartTelescopes = c3.generate({
 		bindto: '#detail-pie-chart-telescopes',
@@ -364,6 +337,30 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 				}
 			}
 		}
+	});
+
+}
+
+WorldMapVisualisation.prototype.drawPieChartDiscMethods = function(name, bucket) {
+	var self = this;
+
+	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart-discovery');
+	$('#detail-pie-chart-discovery').width(self.svg.attr('width')/2-50);
+	
+    var discMethods = self._findDiscoveryMethods(bucket);
+	var discMethodGroups = d3.nest()
+					.key(function(d) { return d; })
+					.rollup(function(v) { return v.length; })
+					.entries(discMethods)
+					.map(function(entry) {
+						return [entry.key, entry.values]
+					});
+
+	var methods = dataHandler.discoveryMethodsColorMap.domain()
+	var colors = dataHandler.discoveryMethodsColorMap.range()
+	var colormap = {}
+	methods.forEach(function(method, index) {
+		colormap[method] = colors[index];
 	});
 
 	var chartDisc = c3.generate({
@@ -387,4 +384,20 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 			}
 		}
 	});
+
+}
+
+WorldMapVisualisation.prototype.drawPieCharts = function(name, bucket) {
+	var self = this;
+
+	d3.select('#detail-pie-chart').remove();
+	d3.select('#pie-chart-wrapper').style('display', 'block');
+	d3.select('#pie-chart-wrapper').style('width', self.svg.attr('width')-50);
+	d3.select('#pie-chart-close').on('click', function() {
+		d3.select('#pie-chart-wrapper').style('display', 'none');
+	});
+	d3.select('#pie-chart-title span').text(name);
+
+	self.drawPieChartTelescopes(name, bucket);
+	self.drawPieChartDiscMethods(name, bucket);
 }
