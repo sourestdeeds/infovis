@@ -285,6 +285,12 @@ WorldMapVisualisation.prototype._findTelescopes = function(bucket) {
 	});
 }
 
+WorldMapVisualisation.prototype._findDiscoveryMethods = function(bucket) {
+	return bucket.values.map(function(entry) {
+		return entry.pl_discmethod;
+	});
+}
+
 WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 	var self = this;
 
@@ -293,10 +299,16 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 	d3.select('#pie-chart-close').on('click', function() {
 		d3.select('#pie-chart-wrapper').style('display', 'none');
 	});
-	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart');
+	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart-telescopes');
+	d3.select('#pie-chart-body').append('div').attr('id', 'detail-pie-chart-discovery');
 	d3.select('#pie-chart-title span').text(name);
 
+	$('#pie-chart-wrapper').width(self.svg.attr('width')-50);
+	$('#detail-pie-chart-telescopes').width(self.svg.attr('width')/2-50);
+	$('#detail-pie-chart-discovery').width(self.svg.attr('width')/2-50);
+
     var telescopes = self._findTelescopes(bucket);
+    var discMethods = self._findDiscoveryMethods(bucket);
     var truncatedTelescopes = [];
     
     telescopes.forEach(function(entry) {
@@ -307,7 +319,7 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
         }
     });
 
-	var groups = d3.nest()
+	var telescopeGroups = d3.nest()
 					.key(function(d) { return d; })
 					.rollup(function(v) { return v.length; })
 					.entries(truncatedTelescopes)
@@ -315,9 +327,26 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 						return [entry.key, entry.values]
 					});
 
+	var discMethodGroups = d3.nest()
+					.key(function(d) { return d; })
+					.rollup(function(v) { return v.length; })
+					.entries(discMethods)
+					.map(function(entry) {
+						return [entry.key, entry.values]
+					});
 
-	var chart = c3.generate({
-		bindto: '#detail-pie-chart',
+	var methods = dataHandler.discoveryMethodsColorMap.domain()
+	var colors = dataHandler.discoveryMethodsColorMap.range()
+	var colormap = {}
+	methods.forEach(function(method, index) {
+		colormap[method] = colors[index];
+	});
+
+	console.log(colormap);
+
+
+	var chartTelescopes = c3.generate({
+		bindto: '#detail-pie-chart-telescopes',
 		size: {
 			height: 200
 		},
@@ -326,7 +355,29 @@ WorldMapVisualisation.prototype.drawPieChart = function(name, bucket) {
 		},
 		data: {
 			type: 'pie',
-			columns: groups
+			columns: telescopeGroups
+		},
+		pie: {
+			label: {
+				format: function(value, ratio, id) {
+					return value;
+				}
+			}
+		}
+	});
+
+	var chartDisc = c3.generate({
+		bindto: '#detail-pie-chart-discovery',
+		size: {
+			height: 200
+		},
+		legend: {
+			position: 'right'
+		},
+		data: {
+			type: 'pie',
+			columns: discMethodGroups,
+			colors: colormap
 		},
 		pie: {
 			label: {
