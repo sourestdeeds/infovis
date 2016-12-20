@@ -4,6 +4,9 @@ var WorldMapVisualisation = function() {
 	
 	this.MAX_LABEL_LENGTH = 35;
 
+	this.svgSpace = d3.select('#worldmap-space-svg');
+	this.gSpace = this.svgSpace.append('g');
+
 	this.svg = d3.select('#worldmap-svg');
 	this.g = this.svg.append('g');
 	this.scale = 1
@@ -36,6 +39,10 @@ var WorldMapVisualisation = function() {
 
 
 	this.svg.call(this.zoom);
+	this.svgSpace.call(d3.behavior.zoom()
+    			.scaleExtent([1, 9])
+    			.on('zoom', function() {
+				}));
 }
 
 
@@ -45,12 +52,15 @@ WorldMapVisualisation.prototype.draw = function () {
 	self.width = document.getElementById('worldmap').offsetWidth
 	self.height = self.width / 2;
 
-	self.svg.attr('width', self.width)
+	self.svg.attr('width', self.width - 300)
+  		.attr('height', '100%')
+
+  	self.svgSpace.attr('width', 300)
   		.attr('height', '100%')
 
 	self.projection = d3.geo.mercator()
-					.translate([(self.width/2), (self.height / 2)])
-					.scale( self.width / 2 / Math.PI);
+					.translate([((self.width-300)/2), (self.height / 2)])
+					.scale( (self.width-300) / 2 / Math.PI);
 
 	self.path = d3.geo.path().projection(self.projection);
 	self.countriesDrawn = false;
@@ -103,6 +113,9 @@ WorldMapVisualisation.prototype.drawPoints = function() {
 			self.drawPoint(location, buckets[location]);
 		}
 	}
+
+	var spaceTelescopes = self._findSpaceTelescopes();
+	self.drawSpaceTelescopes(spaceTelescopes);
 }
 
 WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
@@ -123,7 +136,7 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 		.attr('cx', x)
 		.attr('cy', y)
 		.attr('class', 'point')
-		.attr('r', 5*Math.log(size) / Math.sqrt(self.scale) )
+		.attr('r', 2*Math.sqrt(size) / Math.sqrt(self.scale) )
 		.attr('fill', '#B80004')
 		.attr('stroke', '#B80004')
 		.attr('stroke-width', 2 / self.scale)
@@ -139,6 +152,67 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 		});
 }
 
+WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
+	var self = this;
+
+	self.gSpace.append('g').attr('class', 'gpoint').append('svg:text')
+				.attr('x', 150)
+				.attr('y', 30)
+				.style('text-anchor', 'middle')
+				.text('Space Telescopes')
+				.attr('font-family', 'sans-serif')
+                .attr('font-size', '20px')
+                .attr('fill', 'black');
+
+	var height = self.svgSpace[0][0].scrollHeight / 3.5;
+	var offset = 50;
+	var i = 0
+
+	for (var name in telescopes) {
+		if (telescopes.hasOwnProperty(name)) {
+			var telescope = telescopes[name];
+			(function(name, telescope) {
+				var size = telescope.length;
+
+				var gpoint = self.gSpace.append('g').attr('class', 'gpoint');
+				if (size == 0)
+					return;
+
+				gpoint.append('svg:circle')
+				.attr('cx', 150)
+				.attr('cy', height * i + height/2 + offset)
+				.attr('class', 'point')
+				.attr('r', 2*Math.sqrt(size/(300 / height)) )
+				.attr('fill', '#B80004')
+				.attr('stroke', '#B80004')
+				.attr('stroke-width', 2)
+				.attr('fill-opacity', 0.3)
+				.on('mouseover', function() {
+					d3.select(this).attr('stroke', '#348D61').attr('fill', '#348D61');
+				})
+				.on('mouseout', function() {
+					d3.select(this).attr('stroke', '#B80004').attr('fill', '#B80004');
+				})
+				.on('click', function() {
+					var bucket = {coords: {}, values: telescope}
+					self.drawPieChart(name, bucket);
+				});
+
+				gpoint.append('svg:text')
+				.attr('x', 150)
+				.attr('y', height * i + height/2 + offset)
+				.attr('dy', 25 + 2*Math.sqrt(size/(300 / height)))
+				.style('text-anchor', 'middle')
+				.text(name)
+				.attr('font-family', 'sans-serif')
+                .attr('font-size', '12px')
+                .attr('fill', 'black');
+			})(name, telescope);
+			i++;
+		}
+	}
+}
+
 WorldMapVisualisation.prototype._createBuckets = function() {
 	var self = this;
 
@@ -152,6 +226,22 @@ WorldMapVisualisation.prototype._createBuckets = function() {
 		buckets[name] = {
 			coords: self._findCoordinates(name),
 			values: []
+		}
+	});
+
+	return buckets;
+}
+
+WorldMapVisualisation.prototype._findSpaceTelescopes = function() {
+	var buckets = {
+		'Kepler' : [],
+		'CoRoT' : [],
+		'Hubble Space Telescope': []
+	};
+
+	dataHandler.selectedData.forEach(function(entry) {
+		if (entry.pl_facility in buckets) {
+			buckets[entry.pl_facility].push(entry);
 		}
 	});
 
