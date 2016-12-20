@@ -3,6 +3,7 @@ Xinglong Station,40.394167,117.575,Xinglong Station
 Thueringer Landessternwarte Tautenburg,50.984921,11.710722,Thueringer Landessternwarte Tautenburg
 KELT,31.668611,-110.653889,Winer Observatory
 La Silla Observatory,-29.261167,-70.731333,La Silla Observatory
+OGLE,-29.261167,-70.731333,La Silla Observatory
 Las Campanas Observatory,-29.0146,-70.6926,Las Campanas Observatory
 Okayama Astrophysical Observatory,34.57611,133.594128,Okayama Astrophysical Observatory
 W. M. Keck Observatory,19.825556,-155.476667,Mauna Kea Observatories
@@ -14,7 +15,7 @@ Haute-Provence Observatory,43.931466,5.713448,Haute-Provence Observatory
 McDonald Observatory,30.671389,-104.0225,McDonald Observatory
 Anglo-Australian Telescope,-31.2754,149.0672,Anglo-Australian Telescope
 Bohyunsan Optical Astronomical Observatory,36.165018,128.976436,Bohyunsan Optical Astronomical Observatory
-K2,35.883333,76.516667,K2
+#K2,35.883333,76.516667,K2
 Subaru Telescope,19.825556,-155.476667,Mauna Kea Observatories
 Yunnan Astronomical Observatory,25.033333,102.783333,Yunnan Astronomical Observatory
 MEarth Project,31.681111,-110.878333,Fred Lawrence Whipple Observatory
@@ -25,3 +26,4 @@ Large Binocular Telescope Observatory,32.701308,-109.889064,Large Binocular Tele
 Parkes Observatory,-32.999944,148.262306,Parkes Observatory
 Teide Observatory,28.3,-16.509722,Teide Observatory
 United Kingdom Infrared Telescope,19.825556,-155.476667,Mauna Kea Observatories
+MOA,-43.986667,170.465,MOA

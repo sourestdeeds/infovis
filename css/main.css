@@ -68,15 +68,29 @@ footer {
 	border: 1px solid;
 }
 
+/** Worldmap style **/
+
 #pie-chart-wrapper {
 	position: absolute;
 	bottom: 90px;
 	left: 10px;
-	width: 500px;
 	display: none;
+}
+
+#detail-pie-chart-telescopes, #detail-pie-chart-discovery {
+	float:left;
 }
 
 #pie-chart-close {
 	display: inline-block;
 	float: right;
+}
+
+#worldmap-svg {
+	float: left;
+}
+
+#worldmap-space-svg {
+	border-left:1px solid #AAA;
+	float: left;
 }
