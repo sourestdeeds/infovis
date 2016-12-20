@@ -44,11 +44,6 @@ var WorldMapVisualisation = function() {
     			.on('zoom', function() {
 				}));
 
-	dataHandler.onDataLoaded(function() {
-		self.mapping = self._createMapping();
-		self.buckets = self._createBuckets();
-		self.spaceBuckets = self._createSpaceBuckets();
-	});
 }
 
 
@@ -74,6 +69,10 @@ WorldMapVisualisation.prototype.draw = function () {
 	d3.json('data/world-topo-min.json', function(error, world) {
 		self.drawMap(topojson.feature(world, world.objects.countries).features);
 	});
+
+	self.mapping = self._createMapping();
+	self.buckets = self._createBuckets();
+	self.spaceBuckets = self._createSpaceBuckets();
 };
 
 WorldMapVisualisation.prototype.drawMap = function (topo) {
