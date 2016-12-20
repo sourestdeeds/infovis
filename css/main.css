@@ -60,6 +60,18 @@ footer {
 	left: 10px;
 }
 
+#temperature {
+	position: relative;
+}
+
+#temperature .toolbar {
+	z-index: 100;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+
 .earth-legend-color-block {
 	width: 10px;
 	height: 10px;
