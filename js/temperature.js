@@ -3,9 +3,12 @@ var TemperatureVisualisation = function() {
 	this.tabID = '#temperature';
 	this.svg = d3.select('#temperature-svg');
 
+	this.CHART_X_OFFSET = 250;
+	this.CHART_Y_OFFSET = 20;
+
 	this.zoom = d3.behavior.zoom()
-		.scaleExtent([0.3, 300])
-		.scale(0.9)
+		.scaleExtent([0.1, 300])
+		.scale(0.6)
 		.on('zoom', function() {
 			self._scaleX();
 		});
@@ -18,6 +21,7 @@ TemperatureVisualisation.prototype.draw = function () {
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
+	var self = this;
 	var svgSize = this._getSvgSize();
 	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
 		return element['pl_eqt'] != '' && element['pl_orbsmax'] != '';
@@ -32,7 +36,7 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
-		.attr('cy', function(d) {return svgSize.height * (1 - linearYScale(+d['pl_eqt']))})
+		.attr('cy', function(d) {return svgSize.height * (1 - linearYScale(+d['pl_eqt'])) - self.CHART_Y_OFFSET})
 		.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return colorScale(+d['st_teff']);})
 		.attr('name', function(d) {return +d['st_teff']})
 		.attr('opacity', '0.75')
@@ -42,13 +46,14 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 };
 
 TemperatureVisualisation.prototype._scaleX = function () {
+	var self = this;
 	var scale = this.zoom.scale();
 	$('#temperature-distance-slider').slider('value', this.distanceSliderScaler(scale));
 	var svgSize = this._getSvgSize();
 	var logXScale = d3.scale.log()
 		.domain([1, 2500]);
 	this.svg.selectAll('circle.planet')
-		.attr('cx', function(d) {return scale * svgSize.width * logXScale(+d['pl_orbsmax'] + 1)});
+		.attr('cx', function(d) {return self.CHART_X_OFFSET + scale * svgSize.width * logXScale(+d['pl_orbsmax'] + 1)});
 };
 
 TemperatureVisualisation.prototype._getSvgSize = function () {
@@ -65,7 +70,7 @@ TemperatureVisualisation.prototype._getSvgCenter = function () {
 TemperatureVisualisation.prototype._createSliders = function () {
 	var self = this;
 	this.distanceSliderScaler = d3.scale.log()
-		.domain([0.3, 300])
+		.domain([0.1, 300])
 		.range([0, 1]);
 
 	$('#temperature-distance-slider').slider({
