@@ -8,14 +8,19 @@ function main() {
 
     catchTabEvents();
     timeSlider.setup();
+    radiusSlider.setup();
 
 	visualisationManager.addVisualisation(earthVisualisation);
 	visualisationManager.addVisualisation(temperatureVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 	visualisationManager.addVisualisation(new WorldMapVisualisation());
+	visualisationManager.addVisualisation(new OrbitsVisualisation());
 
 	dataHandler.onDataLoaded(function() {
-	    dataHandler.setRange(timeSlider.DEFAULT_RANGE.min, timeSlider.DEFAULT_RANGE.max);
+		dataHandler.initFilter();
+	    dataHandler.setRange(timeSlider.range.min, timeSlider.range.max);
+	    dataHandler.setRadiusRange(radiusSlider.range.min, radiusSlider.range.max);
+	    dataHandler.filterData();
 		visualisationManager.switchTo('#worldmap'); // TODO put default active tab here
 	});
 }

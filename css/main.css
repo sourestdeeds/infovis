@@ -1,3 +1,7 @@
+* {
+	outline: none !important;
+}
+
 body {
 	padding-top: 40px;
 	background: red;
@@ -8,12 +12,71 @@ body {
 	z-index: 100;
 	top: 0;
 	left: 0;
-	background: #FFF;
+	background: #333;
+	border-bottom: none !important;
 	width:100%;
 }
 
-#slider {
-	margin-top: 30px;
+.nav-tabs li {
+	margin-bottom: 0px !important;
+}
+
+.nav-tabs li a {
+	border-radius: 0px !important;
+	color: #FFF !important;
+	border: 0px !important;
+}
+
+.nav-tabs li.active a,
+.nav-tabs li a:hover {
+	border: 0px !important;
+	background-color: #555 !important;
+}
+
+#time, #radius {
+	width: 49%;
+	float: left;
+}
+
+#time label, #radius label {
+	float: left;
+	margin-right: 15px;
+}
+
+#disc-methods label input[type=checkbox] {
+	margin-right: 7px;
+	-webkit-appearance: none;
+    background-color: transparent;
+    border: 1px solid red;
+    padding: 5px;
+    position: relative;
+}
+
+#disc-methods label input[type=checkbox]:checked {
+    background-color: red;
+}
+
+#disc-methods label input[type=checkbox]:checked:after {
+	content: '\2714';
+	font-size: 10px;
+	position: absolute;
+	top: -2px;
+	left: 1px;
+	color: #FFF;
+}
+
+#time #time-slider-wrapper, #radius #radius-slider-wrapper {
+	width: 100%;
+	padding-left: 80px;
+	padding-right: 20px;
+}
+
+#disc-methods {
+	margin-top: 31px;
+}
+
+#disc-methods .col-sm-2 {
+	width: 20%;
 }
 
 footer {
@@ -22,10 +85,28 @@ footer {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: 85px;
+	height: 130px;
 	padding: 20px;
 	padding-top: 45px;
-	background: #eaeaea;
+	background: #333;
+	color: #FFF;
+}
+
+.ui-rangeSlider .ui-rangeSlider-innerBar {
+	height: 14px !important;
+}
+
+.ui-rangeSlider .ui-rangeSlider-bar {
+	margin-top: 3px !important;
+	height: 14px !important;
+}
+
+.ui-rangeSlider .ui-rangeSlider-handle {
+	height: 20px !important;
+}
+
+.ui-rangeSlider-label {
+	color: #333;
 }
 
 /*
@@ -45,6 +126,11 @@ footer {
 }
 
 #stacked-area-plot-div {
+	width: 100%;
+	height: 100%;
+}
+
+#orbits-div {
 	width: 100%;
 	height: 100%;
 }
@@ -84,7 +170,7 @@ footer {
 
 #pie-chart-wrapper {
 	position: absolute;
-	bottom: 90px;
+	bottom: 130px;
 	left: 10px;
 	display: none;
 }
@@ -105,4 +191,5 @@ footer {
 #worldmap-space-svg {
 	border-left:1px solid #AAA;
 	float: left;
+	background: #04061f;
 }
