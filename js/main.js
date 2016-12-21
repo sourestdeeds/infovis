@@ -13,6 +13,7 @@ function main() {
 	visualisationManager.addVisualisation(temperatureVisualisation);
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 	visualisationManager.addVisualisation(new WorldMapVisualisation());
+	visualisationManager.addVisualisation(new OrbitsVisualisation());
 
 	dataHandler.onDataLoaded(function() {
 	    dataHandler.setRange(timeSlider.DEFAULT_RANGE.min, timeSlider.DEFAULT_RANGE.max);
