@@ -158,7 +158,7 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
 				.text('Space Telescopes')
 				.attr('font-family', 'sans-serif')
                 .attr('font-size', '20px')
-                .attr('fill', 'black');
+                .attr('fill', 'white');
 
 	var height = self.svgSpace[0][0].scrollHeight / 3.5;
 	var offset = 50;
@@ -202,7 +202,7 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
 				.text(name)
 				.attr('font-family', 'sans-serif')
                 .attr('font-size', '12px')
-                .attr('fill', 'black');
+                .attr('fill', 'white');
 			})(name, telescope);
 			i++;
 		}
