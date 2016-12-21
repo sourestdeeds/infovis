@@ -18,6 +18,7 @@ var TemperatureVisualisation = function() {
 
 TemperatureVisualisation.prototype.draw = function () {
 	this._drawPlanets();
+	this._createAxes();
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
@@ -50,10 +51,12 @@ TemperatureVisualisation.prototype._scaleX = function () {
 	var scale = this.zoom.scale();
 	$('#temperature-distance-slider').slider('value', this.distanceSliderScaler(scale));
 	var svgSize = this._getSvgSize();
-	var logXScale = d3.scale.log()
-		.domain([1, 2500]);
+	this.logXScale = d3.scale.log()
+		.domain([1, 2500])
+		.range([0, scale * svgSize.width]);
 	this.svg.selectAll('circle.planet')
-		.attr('cx', function(d) {return self.CHART_X_OFFSET + scale * svgSize.width * logXScale(+d['pl_orbsmax'] + 1)});
+		.attr('cx', function(d) {return self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)});
+	this._createAxes();
 };
 
 TemperatureVisualisation.prototype._getSvgSize = function () {
@@ -101,4 +104,18 @@ TemperatureVisualisation.prototype._createSliders = function () {
 	$('#temperature-planet-scale-checkbox').change(function() {
 		self._setPlanetScales();
 	})
+};
+
+TemperatureVisualisation.prototype._createAxes = function () {
+	var size = this._getSvgSize();
+	var logXScale = d3.scale.log(this.logXScale)
+		.domain([1, 2500])
+		.range([0, 1000]);
+	var axis = d3.svg.axis()
+		.scale(this.logXScale)
+		.ticks(10, '.0f')
+		.tickSize(2,2);
+	this.svg.select('g.axis')
+		.attr('transform', 'translate(' + this.CHART_X_OFFSET + ',' + (size.height - this.CHART_Y_OFFSET) + ')')
+		.call(axis);
 };

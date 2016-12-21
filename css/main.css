@@ -157,6 +157,11 @@ footer {
 	left: 10px;
 }
 
+#temperature .axis line, #temperature .axis path {
+	fill: none;
+	stroke:black;
+	shape-rendering: crisEdges;
+}
 
 .earth-legend-color-block {
 	width: 10px;
