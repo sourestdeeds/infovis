@@ -10,10 +10,11 @@ var TemperatureVisualisation = function() {
 
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 300])
-		.scale(0.8)
+		.scale(0.75)
 		.on('zoom', function() {
 			self._scaleX();
 		});
+	this.svg.call(this.zoom);
 
 	this._createSliders();
 };
@@ -111,9 +112,12 @@ TemperatureVisualisation.prototype._createSliders = function () {
 TemperatureVisualisation.prototype._createYAxis = function () {
 	var axis = d3.svg.axis()
 		.scale(this.linearYScale)
-		.ticks(20)
+		.ticks(10)
 		.tickSize(2,2)
-		.orient('left');
+		.orient('left')
+		.tickFormat(function(x) {
+			return d3.format('.0f')(x) + ' K'
+		});
 	return axis;
 };
 
@@ -138,8 +142,15 @@ TemperatureVisualisation.prototype._createXAxis = function () {
 				n = tickValues[i+1];
 			}
 			var d = logXScale(n) - logXScale(x);
-			if (d > 40 || x == 1 || x == n) {
-				return d3.format('.2f')(x-1);
+			if (d > 52 || x == 1 || x == n) {
+				if (x-1 == 0)
+					return '0 AU';
+				if (x-1 < 0.1)
+					return d3.format('.2f')(x-1) + ' AU';
+				else if (x-1 < 1)
+					return d3.format('.1f')(x-1) + ' AU';
+				else
+					return d3.format('.0f')(x-1) + ' AU';
 			}
 			return '';
 		})
