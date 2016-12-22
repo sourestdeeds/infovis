@@ -1,13 +1,56 @@
 var HistogramVisualisation = function() {
-    this.tabID = "#histograms";
-    this.chart = null;
+    this.tabID = '#histograms';
+    this.dataColumns = ['pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax'];
+    this.div = document.getElementById('histograms-div');
+    this.PADDING = 20;
+    
+    if (!this._isPerfectSquare(this.dataColumns.length)) {
+        throw new Error("Amount of dataColumns in HistogramVisualisation must be a perfect square.");
+    } else {
+        this.tableSide = Math.sqrt(this.dataColumns.length);
+    }
 }
 
 HistogramVisualisation.prototype.draw = function() {
+    this.div.innerHTML = '';
+    var cellSide = Math.round(Math.min(this.div.clientWidth, this.div.clientHeight) / this.tableSide) - this.PADDING * this.tableSide;
+    
+    for (var i = 0; i < this.tableSide; ++i) {
+        var rowDiv = document.createElement('div');
+        rowDiv.style.clear = 'both';
+    
+        for (var j = 0; j < this.tableSide; ++j) {
+            var cell = document.createElement('div');
+            var index = i * this.tableSide + j;
+            var cellId = 'histCell' + index;
+            
+            cell.setAttribute('id', cellId);
+            cell.setAttribute('class', 'histCell');
+            cell.style.width = cellSide + 'px';
+            cell.style.height = cellSide + 'px';
+            cell.style.margin = this.PADDING + 'px ' + this.PADDING + 'px 0px 0px';
+            cell.style.float = 'left';
+            
+            rowDiv.appendChild(cell);
+        }
+        
+        this.div.appendChild(rowDiv);
+    }
+    
+    var self = this;
+    
+    setTimeout(function() {
+        for (var i = 0; i < self.dataColumns.length; ++i) {
+            self._attachHistogram('histCell' + i, self.dataColumns[i]);
+        }
+    }, 0);
+}
+
+HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn) {
     var data = dataHandler.selectedData;
     
     data = this._groupPerMethod(data, function(entry) {
-        var sma = entry['pl_orbsmax'];
+        var sma = entry[dataColumn];
         
         if (sma === "") {
             return null;
@@ -28,34 +71,26 @@ HistogramVisualisation.prototype.draw = function() {
         types[group] = 'spline';
     });
     
-    if (this.chart == null) {
-        this.chart = c3.generate({
-            'bindto': '#histograms-div',
-            'data': {
-                'columns': hists,
-                'types': types
-            },
-            'axis': {
-                'x': {'show': false},
-                'y': {'show': false}
-            },
-            'point': {
-                'show': false
-            },
-            'interaction': {
-                'enabled': false
-            },
-            'legend': {
-                'show': false
-            }
-        });
-    } else {
-        this.chart.load({
+    var chart = c3.generate({
+        'bindto': '#' + cellId,
+        'data': {
             'columns': hists,
-            'types': types,
-            'unload': true
-        });
-    }
+            'types': types
+        },
+        'axis': {
+            'x': {'show': false},
+            'y': {'show': false}
+        },
+        'point': {
+            'show': false
+        },
+        'interaction': {
+            'enabled': false
+        },
+        'legend': {
+            'show': false
+        }
+    });
 }
 
 HistogramVisualisation.prototype._groupPerMethod = function(data, selector) {
@@ -115,4 +150,9 @@ HistogramVisualisation.prototype._hists = function(methods) {
     
     return hists;
 }
+
+HistogramVisualisation.prototype._isPerfectSquare = function(x) {
+	var y = Math.sqrt(x);
+	return Math.floor(y) === y;
+};
 
