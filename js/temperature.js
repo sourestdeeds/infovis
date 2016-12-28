@@ -8,6 +8,8 @@ var TemperatureVisualisation = function() {
 	this.CHART_X_RIGHT_OFFSET = 20;
 	this.CHART_Y_TOP_OFFSET = 20;
 
+	this.DEFAULT_PLANET_SCALE = 0.3;
+
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 300])
 		.scale(0.75)
@@ -16,11 +18,20 @@ var TemperatureVisualisation = function() {
 		});
 	this.svg.call(this.zoom);
 
+	this.planetZoom = d3.behavior.zoom()
+		.scaleExtent([0.1, 10])
+		.scale(this.DEFAULT_PLANET_SCALE)
+		.on('zoom', function() {
+			self._setPlanetScales();
+		});
+
 	this._createSliders();
 };
 
 TemperatureVisualisation.prototype.draw = function () {
 	this._drawPlanets();
+	this._scaleX();
+	this._setPlanetScales();
 	this._createAxes();
 };
 
@@ -45,8 +56,6 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 		.attr('name', function(d) {return +d['st_teff']})
 		.attr('opacity', '0.75')
 		.attr('r', 4);
-
-	this._scaleX();
 };
 
 TemperatureVisualisation.prototype._scaleX = function () {
@@ -60,6 +69,21 @@ TemperatureVisualisation.prototype._scaleX = function () {
 	this.svg.selectAll('circle.planet')
 		.attr('cx', function(d) {return self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)});
 	this._createAxes();
+};
+
+TemperatureVisualisation.prototype._setPlanetScales = function () {
+	var size = this._getSvgSize();
+
+	$('#temperature-planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
+	var scale = this.planetZoom.scale();
+	var usePlanetScale = $('#temperature-planet-scale-checkbox').prop('checked');
+	this.svg.selectAll('circle.planet')
+		.attr('r', function(d) {
+			var radius = 10;
+			if (usePlanetScale)
+				radius = +d['pl_rade'];
+			return  radius * scale;
+		});
 };
 
 TemperatureVisualisation.prototype._getSvgSize = function () {
@@ -101,7 +125,9 @@ TemperatureVisualisation.prototype._createSliders = function () {
 	});
 
 	$('#temperature-planet-slider').on('slide', function(event, ui) {
-		self.rescalePlanets(self.planetSliderScaler.invert(ui.value));
+		self.planetZoom.scale(self.planetSliderScaler.invert(ui.value));
+		// Trigger zoom event listeners
+		self.planetZoom.event(self.svg);
 	});
 
 	$('#temperature-planet-scale-checkbox').change(function() {
