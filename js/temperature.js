@@ -8,7 +8,7 @@ var TemperatureVisualisation = function() {
 	this.CHART_X_RIGHT_OFFSET = 20;
 	this.CHART_Y_TOP_OFFSET = 20;
 
-	this.DEFAULT_PLANET_SCALE = 0.3;
+	this.DEFAULT_PLANET_SCALE = 0.5;
 
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 300])
@@ -25,6 +25,10 @@ var TemperatureVisualisation = function() {
 			self._setPlanetScales();
 		});
 
+	this.colorScale = d3.scale.linear()
+		.domain([100, 3000, 7500])
+		.range(['blue', 'yellow', 'red']);
+
 	this._createSliders();
 };
 
@@ -32,6 +36,7 @@ TemperatureVisualisation.prototype.draw = function () {
 	this._drawPlanets();
 	this._scaleX();
 	this._setPlanetScales();
+	this._setPlanetColors();
 	this._createAxes();
 };
 
@@ -44,18 +49,16 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 	this.linearYScale = d3.scale.linear()
 		.domain([0, 3000])
 		.range([svgSize.height - this.CHART_Y_OFFSET, this.CHART_Y_TOP_OFFSET]);
-	var colorScale = d3.scale.linear()
-		.domain([100, 3000, 7500])
-		.range(['blue', 'yellow', 'red']);
 	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
 		.attr('cy', function(d) {return self.linearYScale(+d['pl_eqt'])})
-		.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return colorScale(+d['st_teff']);})
 		.attr('name', function(d) {return +d['st_teff']})
 		.attr('opacity', '0.75')
+		.attr('fill', 'black')
 		.attr('r', 4);
+	var coloringMethod = $('#temperature-planet-colors-select').val();
 };
 
 TemperatureVisualisation.prototype._scaleX = function () {
@@ -84,6 +87,17 @@ TemperatureVisualisation.prototype._setPlanetScales = function () {
 				radius = +d['pl_rade'];
 			return  radius * scale;
 		});
+};
+
+TemperatureVisualisation.prototype._setPlanetColors = function () {
+	var self = this;
+	var planets = this.svg.selectAll('circle.planet');
+	var coloringMethod = $('#temperature-planet-colors-select').val();
+	if(coloringMethod == 'star-temperature') {
+		planets.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return self.colorScale(+d['st_teff']);});
+	} else {
+		planets.attr('fill', function(d) {return dataHandler.discoveryMethodsColorMap(d['pl_discmethod']);});
+	}
 };
 
 TemperatureVisualisation.prototype._getSvgSize = function () {
@@ -132,6 +146,10 @@ TemperatureVisualisation.prototype._createSliders = function () {
 
 	$('#temperature-planet-scale-checkbox').change(function() {
 		self._setPlanetScales();
+	});
+
+	$('#temperature-planet-colors-select').change(function() {
+		self._setPlanetColors();
 	})
 };
 
