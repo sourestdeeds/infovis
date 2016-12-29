@@ -65,7 +65,7 @@ body {
 	color: #FFF;
 }
 
-@media screen and (max-width: 1250px) {
+@media screen and (max-width: 1280px) {
     #disc-methods label  {
 		font-size: 12px;
 	}
