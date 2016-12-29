@@ -160,7 +160,7 @@ footer {
 #temperature .axis line, #temperature .axis path {
 	fill: none;
 	stroke:black;
-	shape-rendering: crisEdges;
+	shape-rendering: crispEdges;
 }
 
 .earth-legend-color-block {
@@ -169,6 +169,33 @@ footer {
 	display: inline-block;
 	margin-right: 5px;
 	border: 1px solid;
+}
+
+/** General inforbar styling **/
+
+.infobar {
+	z-index: 100;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.infobar .panel-title {
+	float: right;
+}
+
+.infobar .panel-heading-bottom {
+	clear: both;
+}
+
+.infobar {
+	max-width: 300px;
+}
+
+.infobar .panel-body {
+	max-height: 400px;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 /** Worldmap style **/
