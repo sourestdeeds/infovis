@@ -8,6 +8,13 @@ var TemperatureVisualisation = function() {
 	this.CHART_X_RIGHT_OFFSET = 20;
 	this.CHART_Y_TOP_OFFSET = 20;
 
+	this.COLOR_LEGEND_MAX_TEMP = 11000;
+	this.COLOR_LEGEND_MIN_TEMP = 570;
+	this.COLOR_LEGEND_AVG_TEMP = 5000;
+	this.COLOR_LEGEND_WIDTH = 10;
+	this.COLOR_LEGEND_HEIGHT = 200;
+	this.COLOR_LEGEND_X_OFFSET = 20;
+
 	this.DEFAULT_PLANET_SCALE = 0.5;
 
 	this.zoom = d3.behavior.zoom()
@@ -26,7 +33,7 @@ var TemperatureVisualisation = function() {
 		});
 
 	this.colorScale = d3.scale.linear()
-		.domain([100, 3000, 7500])
+		.domain([this.COLOR_LEGEND_MIN_TEMP, this.COLOR_LEGEND_AVG_TEMP, this.COLOR_LEGEND_MAX_TEMP])
 		.range(['blue', 'yellow', 'red']);
 
 	this._createSliders();
@@ -38,6 +45,7 @@ TemperatureVisualisation.prototype.draw = function () {
 	this._setPlanetScales();
 	this._setPlanetColors();
 	this._createAxes();
+	this._createColorLegend();
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
@@ -215,4 +223,41 @@ TemperatureVisualisation.prototype._createAxes = function () {
 		.call(xAxis);
 	this.svg.select('g.y-axis')
 		.call(yAxis);
+};
+
+TemperatureVisualisation.prototype._createColorLegend = function () {
+	var self = this;
+	var size = this._getSvgSize();
+
+	var tempScale = d3.scale.linear()
+		.domain([this.COLOR_LEGEND_MIN_TEMP, this.COLOR_LEGEND_MAX_TEMP])
+		.range([this.COLOR_LEGEND_HEIGHT, 0]);
+
+	var axis = d3.svg.axis()
+		.scale(tempScale)
+		.ticks(5)
+		.tickSize(1,0)
+		.orient('right')
+		.tickFormat(function(x) {
+			return d3.format('.0f')(x) + ' K'
+		});
+
+	var legend = this.svg.select('g.color-legend');
+	legend.attr('transform', 'translate(' + this.COLOR_LEGEND_X_OFFSET + ',' + (size.height	- this.CHART_Y_OFFSET - this.COLOR_LEGEND_HEIGHT) + ')')
+		.call(axis);
+
+	var data = [];
+	for (var i = 0; i < this.COLOR_LEGEND_HEIGHT; i++) {
+		data.push(i);
+	}
+
+	var legendLines = legend.selectAll('line.color-line').data(data);
+	legendLines.exit().remove();
+	legendLines.enter().append('line');
+	legendLines.classed('color-line', true)
+		.attr('x1', 0)
+		.attr('x2', -this.COLOR_LEGEND_WIDTH)
+		.attr('y1', function(d) {return d})
+		.attr('y2', function (d) {return d})
+		.attr('stroke', function(d) {return self.colorScale(tempScale.invert(d))});
 };
