@@ -65,6 +65,16 @@ body {
 	color: #FFF;
 }
 
+@media screen and (max-width: 1250px) {
+    #disc-methods label  {
+		font-size: 12px;
+	}
+
+	#disc-methods .col-sm-2 {
+		padding: 0px 10px;
+	}
+}
+
 #time #time-slider-wrapper, #radius #radius-slider-wrapper {
 	width: 100%;
 	padding-left: 80px;
@@ -90,6 +100,12 @@ footer {
 	padding-top: 45px;
 	background: #333;
 	color: #FFF;
+}
+
+@media screen and (max-width: 1060px) {
+    footer {
+    	height: 150px;
+    }
 }
 
 .ui-rangeSlider .ui-rangeSlider-innerBar {
