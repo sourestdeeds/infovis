@@ -117,7 +117,8 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 		.domain([0, this.DEFAULT_SCALE_DISTANCE / this.zoom.scale()])
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
-		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])});
+		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])})
+		.attr('style', function (d) {return (d['st_dist'] == '')? 'visibility:hidden' : ''});
 	this.scaleIndications
 		.attr('opacity', function(d) {return (scaler(d) < 20)? 0 : 1})
 		.attr('r', function(d) {return scaler(d)});
@@ -305,7 +306,7 @@ EarthVisualisation.prototype._createPieChart = function () {
 };
 
 EarthVisualisation.prototype._createScaleIndications = function () {
-	var data = [Math.pow(10,1),Math.pow(10,1.5),Math.pow(10,2),Math.pow(10,2.5),Math.pow(10,3),Math.pow(10,3.5),Math.pow(10,4)]
+	var data = [1,3,10,30,100,300,1000,3000,10000]
 	this.scaleIndications = this.svg.selectAll('circle.scale-indications').data(data);
 	this.scaleIndications.enter().append('circle');
 	this.scaleIndications.classed('scale-indications', true)
