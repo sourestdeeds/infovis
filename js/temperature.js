@@ -103,8 +103,10 @@ TemperatureVisualisation.prototype._setPlanetColors = function () {
 	var coloringMethod = $('#temperature-planet-colors-select').val();
 	if(coloringMethod == 'star-temperature') {
 		planets.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return self.colorScale(+d['st_teff']);});
+		this.svg.select('g.color-legend').attr('style', 'visibility:visible');
 	} else {
 		planets.attr('fill', function(d) {return dataHandler.discoveryMethodsColorMap(d['pl_discmethod']);});
+		this.svg.select('g.color-legend').attr('style', 'visibility:hidden');
 	}
 };
 
