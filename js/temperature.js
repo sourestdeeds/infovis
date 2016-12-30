@@ -17,6 +17,44 @@ var TemperatureVisualisation = function() {
 
 	this.DEFAULT_PLANET_SCALE = 0.5;
 
+	this.EARTH_INFO = {
+		'pl_eqt': 255,
+		'pl_orbsmax': 1,
+		'st_teff': 5777,
+		'pl_rade': 1,
+		'pl_discmethod': '',
+		'pl_name': 'Earth'
+	};
+
+	this.JUPITER_INFO = {
+		'pl_eqt': 110,
+		'pl_orbsmax': 5.2,
+		'st_teff': 5777,
+		'pl_rade': 11.2,
+		'pl_discmethod': '',
+		'pl_name': 'Jupiter'
+	};
+
+	this.MERCURY_INFO = {
+		'pl_eqt': 449,
+		'pl_orbsmax': 0.39,
+		'st_teff': 5777,
+		'pl_rade': 0.383,
+		'pl_discmethod': '',
+		'pl_name': 'Mercury'
+	};
+
+	this.NEPTUNE_INFO = {
+		'pl_eqt': 46.6,
+		'pl_orbsmax': 30.047,
+		'st_teff': 5777,
+		'pl_rade': 3.883,
+		'pl_discmethod': '',
+		'pl_name': 'Neptune'
+	};
+
+	this.SPECIAL_PLANETS = [this.MERCURY_INFO, this.EARTH_INFO, this.JUPITER_INFO, this.NEPTUNE_INFO];
+
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 300])
 		.scale(0.75)
@@ -46,6 +84,7 @@ TemperatureVisualisation.prototype.draw = function () {
 	this._setPlanetColors();
 	this._createAxes();
 	this._createColorLegend();
+	this._drawSpecialPlanetIndicators();
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
@@ -54,10 +93,14 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
 		return element['pl_eqt'] != '' && element['pl_orbsmax'] != '';
 	});
+	for (var i = 0; i < this.SPECIAL_PLANETS.length; i++) {
+		selectedPlanets.push(this.SPECIAL_PLANETS[i]);
+	}
+
 	this.linearYScale = d3.scale.linear()
 		.domain([0, 3000])
 		.range([svgSize.height - this.CHART_Y_OFFSET, this.CHART_Y_TOP_OFFSET]);
-	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
+	var planets = this.svg.select('g.planets').selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
@@ -80,6 +123,8 @@ TemperatureVisualisation.prototype._scaleX = function () {
 	this.svg.selectAll('circle.planet')
 		.attr('cx', function(d) {return self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)});
 	this._createAxes();
+
+	this.svg.selectAll('g.indicator').attr('transform', function(d) {return 'translate(' + (self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)) + ',' + self.linearYScale(+d['pl_eqt']) + ')'});
 };
 
 TemperatureVisualisation.prototype._setPlanetScales = function () {
@@ -105,7 +150,7 @@ TemperatureVisualisation.prototype._setPlanetColors = function () {
 		planets.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return self.colorScale(+d['st_teff']);});
 		this.svg.select('g.color-legend').attr('style', 'visibility:visible');
 	} else {
-		planets.attr('fill', function(d) {return dataHandler.discoveryMethodsColorMap(d['pl_discmethod']);});
+		planets.attr('fill', function(d) {return (d['pl_discmethod'] != '')? dataHandler.discoveryMethodsColorMap(d['pl_discmethod']) : 'black';});
 		this.svg.select('g.color-legend').attr('style', 'visibility:hidden');
 	}
 };
@@ -262,4 +307,27 @@ TemperatureVisualisation.prototype._createColorLegend = function () {
 		.attr('y1', function(d) {return d})
 		.attr('y2', function (d) {return d})
 		.attr('stroke', function(d) {return self.colorScale(tempScale.invert(d))});
+};
+
+TemperatureVisualisation.prototype._drawSpecialPlanetIndicators = function () {
+	var self = this;
+
+	var indicators = this.svg.select('g.planet-indicators').selectAll('g.indicator').data(this.SPECIAL_PLANETS)
+	indicators.exit().remove();
+	var newIndicators = indicators.enter().append('g');
+	indicators.classed('indicator', true)
+		.attr('transform', function(d) {return 'translate(' + (self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)) + ',' + self.linearYScale(+d['pl_eqt']) + ')'})
+
+	newIndicators.append('text')
+		.text(function(d) {return d['pl_name']})
+		.attr('dy', -45)
+		.attr('dx', 2);
+
+	newIndicators.append('line')
+		.attr('x1', 0)
+		.attr('y1', 0)
+		.attr('x2', 0)
+		.attr('y2', -50)
+		.attr('stroke', 'black')
+		.attr('style', 'shape-rendering: crispEdges');
 };
