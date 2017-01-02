@@ -89,6 +89,7 @@ TemperatureVisualisation.prototype.draw = function () {
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
 	var self = this;
+	var tooltip = d3.select('#tooltip');
 	var svgSize = this._getSvgSize();
 	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
 		return element['pl_eqt'] != '' && element['pl_orbsmax'] != '';
@@ -102,7 +103,25 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 		.range([svgSize.height - this.CHART_Y_OFFSET, this.CHART_Y_TOP_OFFSET]);
 	var planets = this.svg.select('g.planets').selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
-	planets.enter().append('circle');
+	planets.enter().append('circle')
+		.on('mouseover', function(d) {
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', .95);
+			tooltip.html('<b>' + d['pl_name'] + '</b><br/>' +
+					'Radius: ' + ((d['pl_rade'] == '')? '?' : d['pl_rade'] + ' Earth radii') + '<br/>' +
+					'Temperature: ' + ((d['pl_eqt'] == '')? '?' : d3.format('.0f')(d['pl_eqt']) + ' K') + '<br/>' +
+					'Host star distance: ' + ((d['pl_orbsmax'] == '')? '?' : d3.format('.3f')(d['pl_orbsmax']) + ' AU') + '<br/>' +
+					'Host star temperature: ' + ((d['st_teff'] == '')? '?' : d3.format('.0f')(d['st_teff']) + ' K') + '<br/>'
+			)
+				.style('left', (d3.event.pageX + 10) + 'px')
+				.style('top', (d3.event.pageY + 10) + 'px');
+		})
+		.on('mouseout', function(d) {
+			tooltip.transition()
+				.duration(500)
+				.style('opacity', 0);
+		});
 	planets.classed('planet', true)
 		.attr('cy', function(d) {return self.linearYScale(+d['pl_eqt'])})
 		.attr('name', function(d) {return +d['st_teff']})
