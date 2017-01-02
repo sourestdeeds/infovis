@@ -49,7 +49,7 @@ EarthVisualisation.prototype.draw = function () {
 
 	this._calcDiscoveryMethodDistribution(selectedPlanets);
 
-	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
+	var planets = this.svg.select('g.planets').selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
 	planets.enter().append('circle');
 	planets.classed('planet', true)
@@ -310,9 +310,9 @@ EarthVisualisation.prototype._createScaleIndications = function () {
 	this.scaleIndications = this.svg.selectAll('circle.scale-indications').data(data);
 	this.scaleIndications.enter().append('circle');
 	this.scaleIndications.classed('scale-indications', true)
-		.attr('stroke', '#DDDDDD')
+		.attr('stroke', '#AAAAAA')
 		.attr('stroke-width', 1)
-		.attr('opacity', 0.5)
+		.attr('opacity', 1.0)
 		.attr('fill', 'none');
 	this.scaleIndicationLabels = this.svg.selectAll('text.scale-indication-labels').data(data);
 	this.scaleIndicationLabels.enter().append('text');
