@@ -63,11 +63,13 @@ DataHandler.prototype.filterData = function() {
 
 	this.selectedData = this.data.filter(function(entry) {
 		year = parseInt(entry['pl_disc']);
-		radius = parseInt(entry['pl_rade']);
+		radius = parseFloat(entry['pl_rade']);
 		method = entry['pl_discmethod'];
 
 		if (self.timeFilterOn && !(self.currentRange[0] <= year && year <= self.currentRange[1]))
 			return false;
+
+		//console.log(self.currentRadiusRange[0], radius, self.currentRadiusRange[1]);
 
 		if (self.radiusFilterOn && !(self.currentRadiusRange[0] <= radius && radius <= self.currentRadiusRange[1]))
 			return false;
