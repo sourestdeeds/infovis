@@ -34,6 +34,19 @@ StackedAreaPlot.prototype.draw = function() {
                     'type': 'category',
                     'categories': ticks
                 }
+            },
+            'point': {
+                'show': false
+            },
+            'grid': {
+                'x': {
+                    'lines': [
+                        {
+                            'value': '2009',
+                            'text': 'Kepler Launch'
+                        }
+                    ]
+                }
             }
         });
     // } else {
