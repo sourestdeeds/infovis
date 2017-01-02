@@ -89,9 +89,9 @@
 							<div>
 								<h4>Distance Scale:</h4>
 								<div id="earth-distance-slider"></div>
-								<h4>Planet Scale:</h4>
+								<h4>Dot Radius Scale:</h4>
 								<div id="earth-planet-slider"></div>
-								<label><input type="checkbox" id="earth-planet-scale-checkbox" value=""> Use planet radius for scale</label><br/>
+								<label><input type="checkbox" id="earth-planet-scale-checkbox" value=""> Use planet radius for dot radius</label><br/>
 								<label><input type="checkbox" id="earth-planet-pie-checkbox" value=""> Disable pie chart</label>
 								<div id="earth-legend" style="display:none">
 
@@ -113,14 +113,37 @@
 					<div id="earth-info" class="panel-collapse collapse">
 						<div class="panel-body">
 							<div>
-								<h4>A title:</h4>
+								<h3>Description</h3>
 								<p>
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
+									The <b>pie chart</b> visualizes the distribution of discovery methods for exoplanets.
+									Each <b>dot</b> on the chart represents a discovered planet.
+									The <b>distance</b> between a dot and the center of the pie chart visualizes the distance between this planet and Earth in <em>parsec (pc)</em>.
+									The <b>color</b> of a dot indicates the discovery method of this planet.
+									If enabled in the tools menu, the <b>radius</b> of a dot represents the radius of the planet.
+								</p>
+
+								<h3>Tools</h3>
+								<p>
+									In the <b>Tools menu</b> (upper left corner), you can interact with the visualisation in the following ways:
+									Use the <b>Distance Scale slider</b> to change the distance scale. Alternatively, you can also zoom in or out on the visualisation.
+									Use the <b>Dot Radius Scale slider</b> to change the radius scale of the dots.
+									When <b>Use planet radius for dot radius</b> is enabled, the radius of the dot is based on the radius of the planet it represents.
+									In this case, Earth and Jupiter are drawn in the lower left corner for reference.
+									The <b>Disable pie chart</b> option allows you to enable or disable the grouping of planets in a pie chart based on their discovery method.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+									If the distance between the planet and Earth is not known, the planet is not drawn as a dot.
+									When <b>Use planet radius for dot radius</b> is enabled, planets with no known radius aren't drawn.
+									In both cases these planets are still taken into account when calculating the distribution of discovery methods.
+									Depending on the current selection, this may result in some parts of the pie chart with no dots in them.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									When <b>Use planet radius for dot radius</b> is enabled, it might be difficult to focus on smaller planets.
+									Increase the <b>Dot Radius Scale slider</b> to make them larger, and reduce the <b>Radius selection</b> upper bound in the selection menu to hide large planets.
 								</p>
 							</div>
 						</div>
