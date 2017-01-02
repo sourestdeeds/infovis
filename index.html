@@ -92,6 +92,7 @@
 								<h4>Dot Radius Scale:</h4>
 								<div id="earth-planet-slider"></div>
 								<label><input type="checkbox" id="earth-planet-scale-checkbox" value=""> Use planet radius for dot radius</label><br/>
+								<h4>Discovery Methods:</h4>
 								<label><input type="checkbox" id="earth-planet-pie-checkbox" value=""> Disable pie chart</label>
 								<div id="earth-legend" style="display:none">
 
@@ -174,10 +175,10 @@
 							<div>
 								<h4>Distance Scale:</h4>
 								<div id="temperature-distance-slider"></div>
-								<h4>Planet Scale:</h4>
+								<h4>Dot Radius Scale:</h4>
 								<div id="temperature-planet-slider"></div>
-								<label><input type="checkbox" id="temperature-planet-scale-checkbox" value=""> Use planet radius for scale</label><br/>
-								<h4>Planet colors:</h4>
+								<label><input type="checkbox" id="temperature-planet-scale-checkbox" value=""> Use planet radius for dot radius</label><br/>
+								<h4>Planet Colors:</h4>
 								<select id="temperature-planet-colors-select">
 									<option value="star-temperature">Star Temperature</option>
 									<option value="discovery-method">Discovery Method</option>
@@ -199,14 +200,41 @@
 					<div id="temperature-info" class="panel-collapse collapse">
 						<div class="panel-body">
 							<div>
-								<h4>Distance Scale:</h4>
+								<h3>Description</h3>
 								<p>
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
-									Blalb bldqjlkf sdqnkf kjqdfk k gkqfg k q gdflkj g kl kljfqdgq dkgk kj gfqkj gfk n fdkfkn, ndkl fdknl nkvb   nkdf gqdnfb lfdnbq ndf
+									The <b>scatter plot</b> visualizes the relation between the temperature of exoplanets and the distance from their host star.
+									Each <b>dot</b> on the plot represents a discovered exoplanet.
+									The <b>x-axis</b> indicates the equilibrium temperature of the exoplanet in <em>Kelvin (K)</em>.
+									The <b>y-axis</b> indicates the distance between the exoplanet and his host star in <em>Astronomical Units (AU)</em>.
+									Depending on the current selection, the <b>color</b> of a dot indicates the discovery method or the host star temperature of this planet.
+									If enabled in the tools menu, the <b>radius</b> of a dot represents the radius of the planet.
+									Some <b>Solar system planets</b> are added for reference.
+								</p>
+
+								<h3>Tools</h3>
+								<p>
+									In the <b>Tools menu</b> (upper left corner), you can interact with the visualisation in the following ways:
+									Use the <b>Distance Scale slider</b> to change the distance scale. Alternatively, you can also zoom in or out on the visualisation.
+									Use the <b>Dot Radius Scale slider</b> to change the radius scale of the dots.
+									When <b>Use planet radius for dot radius</b> is enabled, the radius of the dot is based on the radius of the planet it represents.
+									The <b>Planet Colors</b> option changes the color usage.
+									If <b>Star Temperature</b> is selected, the color of each dot indicates the temperature of the host star.
+									A <b>color scale</b> in the lower left corner shows the temperature related to each color in <em>Kelvin (K)</em>.
+									If <b>Discovery Methods</b> is selected, the color of each dot represents the discovery method for this planet.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+									If the distance between the planet and its host star or the temperature of the planet is not known, the planet is not drawn.
+									When <b>Use planet radius for dot radius</b> is enabled, planets with no known radius aren't drawn.
+									When <b>Star Temperature</b> is selected, exoplanets with no know host star temperature are displayed as <b>black dots</b>.
+									When <b>Discovery Methods</b> is selected, the planets of our Solar system are displayed as <b>black dots</b>.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									When <b>Use planet radius for dot radius</b> is enabled, it might be difficult to focus on smaller planets.
+									Increase the <b>Dot Radius Scale slider</b> to make them larger, and reduce the <b>Radius selection</b> upper bound in the selection menu to hide large planets.
 								</p>
 							</div>
 						</div>
