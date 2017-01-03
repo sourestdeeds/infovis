@@ -161,14 +161,17 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
                 .attr('fill', 'white');
 
 	var height = self.svgSpace[0][0].scrollHeight / 3.5;
+	height = (height == 0) ? ((self.svgSpace[0]['parentNode'].scrollHeight - 230) / 3.5) : height;
 	var offset = 50;
 	var i = 0
 
 	for (var name in telescopes) {
 		if (telescopes.hasOwnProperty(name)) {
 			var telescope = telescopes[name];
-			(function(name, telescope) {
+			(function(name, telescope, height) {
 				var size = telescope.length;
+
+				console.log(size, 2*Math.sqrt(size / (300 / height)), (300 / height), height);
 
 				var gpoint = self.gSpace.append('g').attr('class', 'gpoint');
 				if (size == 0)
@@ -203,7 +206,7 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
 				.attr('font-family', 'sans-serif')
                 .attr('font-size', '12px')
                 .attr('fill', 'white');
-			})(name, telescope);
+			})(name, telescope, height);
 			i++;
 		}
 	}
