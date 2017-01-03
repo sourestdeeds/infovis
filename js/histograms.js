@@ -13,7 +13,10 @@ var HistogramVisualisation = function() {
 
 HistogramVisualisation.prototype.draw = function() {
     this.div.innerHTML = '';
-    var cellSide = Math.round(Math.min(this.div.clientWidth, this.div.clientHeight) / this.tableSide) - this.PADDING * this.tableSide;
+    var cellSide = Math.round(Math.min(this.div.clientWidth, this.div.clientHeight) / this.tableSide) - this.PADDING;
+    var tableWidth = ((cellSide + this.PADDING + 1) * this.tableSide) + 'px';
+    
+    this.div.style.maxWidth = tableWidth;
     
     for (var i = 0; i < this.tableSide; ++i) {
         var rowDiv = document.createElement('div');
@@ -28,8 +31,8 @@ HistogramVisualisation.prototype.draw = function() {
             cell.setAttribute('class', 'histCell');
             cell.style.width = cellSide + 'px';
             cell.style.height = cellSide + 'px';
-            cell.style.margin = this.PADDING + 'px ' + this.PADDING + 'px 0px 0px';
-            cell.style.float = 'left';
+            
+            this._setMargin(i, j, cell);
             
             rowDiv.appendChild(cell);
         }
@@ -44,6 +47,20 @@ HistogramVisualisation.prototype.draw = function() {
             self._attachHistogram('histCell' + i, self.dataColumns[i]);
         }
     }, 0);
+}
+
+HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
+    if (i === 0) {
+        cell.style.marginTop = Math.round(this.PADDING / 2) + 'px';
+    } else {
+        cell.style.marginTop = this.PADDING + 'px';
+    }
+    
+    if (j === 0) {
+        cell.style.marginLeft = Math.round(this.PADDING / 2) + 'px';
+    } else {
+        cell.style.marginLeft = this.PADDING + 'px';
+    }
 }
 
 HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn) {
