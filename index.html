@@ -75,7 +75,9 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="earth">
 				<svg id="earth-svg">
-					<circle class="earth" cx="0" cy="0" r="1" fill="blue"></circle>
+					<g class="pie-container"></g>
+					<g class="planets"></g>
+					<circle class="earth" cx="0" cy="0" r="1" fill="blue" style="visibility:hidden"></circle>
 				</svg>
 				<div class="toolbar panel panel-default">
 					<div class="panel-heading">
@@ -91,13 +93,63 @@
 							<div>
 								<h4>Distance Scale:</h4>
 								<div id="earth-distance-slider"></div>
-								<h4>Planet Scale:</h4>
+								<h4>Dot Radius Scale:</h4>
 								<div id="earth-planet-slider"></div>
-								<label><input type="checkbox" id="earth-planet-scale-checkbox" value=""> Use planet radius for scale</label><br/>
+								<label><input type="checkbox" id="earth-planet-scale-checkbox" value=""> Use planet radius for dot radius</label><br/>
+								<h4>Discovery Methods:</h4>
 								<label><input type="checkbox" id="earth-planet-pie-checkbox" value=""> Disable pie chart</label>
-								<div id="earth-legend">
+								<div id="earth-legend" style="display:none">
 
 								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="infobar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Info
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#earth-info" aria-expanded="false" aria-controls="earth-info">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+						</h3>
+						<div class="panel-heading-bottom"></div>
+					</div>
+					<div id="earth-info" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h3>Description</h3>
+								<p>
+									The <b>pie chart</b> visualizes the distribution of discovery methods for exoplanets.
+									Each <b>dot</b> on the chart represents a discovered planet.
+									The <b>distance</b> between a dot and the center of the pie chart visualizes the distance between this planet and Earth in <em>parsec (pc)</em>.
+									The <b>color</b> of a dot indicates the discovery method of this planet.
+									If enabled in the tools menu, the <b>radius</b> of a dot represents the radius of the planet.
+								</p>
+
+								<h3>Tools</h3>
+								<p>
+									In the <b>Tools menu</b> (upper left corner), you can interact with the visualisation in the following ways:
+									Use the <b>Distance Scale slider</b> to change the distance scale. Alternatively, you can also zoom in or out on the visualisation.
+									Use the <b>Dot Radius Scale slider</b> to change the radius scale of the dots.
+									When <b>Use planet radius for dot radius</b> is enabled, the radius of the dot is based on the radius of the planet it represents.
+									In this case, Earth and Jupiter are drawn in the lower left corner for reference.
+									The <b>Disable pie chart</b> option allows you to enable or disable the grouping of planets in a pie chart based on their discovery method.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+									If the distance between the planet and Earth is not known, the planet is not drawn as a dot.
+									When <b>Use planet radius for dot radius</b> is enabled, planets with no known radius aren't drawn.
+									In both cases these planets are still taken into account when calculating the distribution of discovery methods.
+									Depending on the current selection, this may result in some parts of the pie chart with no dots in them.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									When <b>Use planet radius for dot radius</b> is enabled, it might be difficult to focus on smaller planets.
+									Increase the <b>Dot Radius Scale slider</b> to make them larger, and reduce the <b>Radius selection</b> upper bound in the selection menu to hide large planets.
+								</p>
 							</div>
 						</div>
 					</div>
@@ -105,15 +157,18 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="temperature">
 				<svg id="temperature-svg">
+					<g class="color-legend"></g>
 					<g class="axis">
 						<g class="x-axis"></g>
 						<g class="y-axis"></g>
 					</g>
+					<g class="planets"></g>
+					<g class="planet-indicators"></g>
 				</svg>
 				<div class="toolbar panel panel-default">
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#temperature-tools" aria-expanded="false" aria-controls="earth-tools">
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#temperature-tools" aria-expanded="false" aria-controls="temperature-tools">
 								<span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
 							</button>
 							Tools
@@ -124,9 +179,67 @@
 							<div>
 								<h4>Distance Scale:</h4>
 								<div id="temperature-distance-slider"></div>
-								<h4>Planet Scale:</h4>
+								<h4>Dot Radius Scale:</h4>
 								<div id="temperature-planet-slider"></div>
-								<label><input type="checkbox" id="temperature-planet-scale-checkbox" value=""> Use planet radius for scale</label><br/>
+								<label><input type="checkbox" id="temperature-planet-scale-checkbox" value=""> Use planet radius for dot radius</label><br/>
+								<h4>Planet Colors:</h4>
+								<select id="temperature-planet-colors-select">
+									<option value="star-temperature">Star Temperature</option>
+									<option value="discovery-method">Discovery Method</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="infobar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Info
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#temperature-info" aria-expanded="false" aria-controls="temperature-info">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+						</h3>
+						<div class="panel-heading-bottom"></div>
+					</div>
+					<div id="temperature-info" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h3>Description</h3>
+								<p>
+									The <b>scatter plot</b> visualizes the relation between the temperature of exoplanets and the distance from their host star.
+									Each <b>dot</b> on the plot represents a discovered exoplanet.
+									The <b>x-axis</b> indicates the equilibrium temperature of the exoplanet in <em>Kelvin (K)</em>.
+									The <b>y-axis</b> indicates the distance between the exoplanet and his host star in <em>Astronomical Units (AU)</em>.
+									Depending on the current selection, the <b>color</b> of a dot indicates the discovery method or the host star temperature of this planet.
+									If enabled in the tools menu, the <b>radius</b> of a dot represents the radius of the planet.
+									Some <b>Solar system planets</b> are added for reference.
+								</p>
+
+								<h3>Tools</h3>
+								<p>
+									In the <b>Tools menu</b> (upper left corner), you can interact with the visualisation in the following ways:
+									Use the <b>Distance Scale slider</b> to change the distance scale. Alternatively, you can also zoom in or out on the visualisation.
+									Use the <b>Dot Radius Scale slider</b> to change the radius scale of the dots.
+									When <b>Use planet radius for dot radius</b> is enabled, the radius of the dot is based on the radius of the planet it represents.
+									The <b>Planet Colors</b> option changes the color usage.
+									If <b>Star Temperature</b> is selected, the color of each dot indicates the temperature of the host star.
+									A <b>color scale</b> in the lower left corner shows the temperature related to each color in <em>Kelvin (K)</em>.
+									If <b>Discovery Methods</b> is selected, the color of each dot represents the discovery method for this planet.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+									If the distance between the planet and its host star or the temperature of the planet is not known, the planet is not drawn.
+									When <b>Use planet radius for dot radius</b> is enabled, planets with no known radius aren't drawn.
+									When <b>Star Temperature</b> is selected, exoplanets with no know host star temperature are displayed as <b>black dots</b>.
+									When <b>Discovery Methods</b> is selected, the planets of our Solar system are displayed as <b>black dots</b>.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									When <b>Use planet radius for dot radius</b> is enabled, it might be difficult to focus on smaller planets.
+									Increase the <b>Dot Radius Scale slider</b> to make them larger, and reduce the <b>Radius selection</b> upper bound in the selection menu to hide large planets.
+								</p>
 							</div>
 						</div>
 					</div>
@@ -167,5 +280,6 @@
 		<div id="disc-methods" class="row">
 		</div>
 	</footer>
+	<div id="tooltip" style="opacity:0"></div>
 </body>
 </html>

@@ -8,6 +8,53 @@ var TemperatureVisualisation = function() {
 	this.CHART_X_RIGHT_OFFSET = 20;
 	this.CHART_Y_TOP_OFFSET = 20;
 
+	this.COLOR_LEGEND_MAX_TEMP = 11000;
+	this.COLOR_LEGEND_MIN_TEMP = 570;
+	this.COLOR_LEGEND_AVG_TEMP = 5000;
+	this.COLOR_LEGEND_WIDTH = 10;
+	this.COLOR_LEGEND_HEIGHT = 200;
+	this.COLOR_LEGEND_X_OFFSET = 20;
+
+	this.DEFAULT_PLANET_SCALE = 0.5;
+
+	this.EARTH_INFO = {
+		'pl_eqt': 255,
+		'pl_orbsmax': 1,
+		'st_teff': 5777,
+		'pl_rade': 1,
+		'pl_discmethod': '',
+		'pl_name': 'Earth'
+	};
+
+	this.JUPITER_INFO = {
+		'pl_eqt': 110,
+		'pl_orbsmax': 5.2,
+		'st_teff': 5777,
+		'pl_rade': 11.2,
+		'pl_discmethod': '',
+		'pl_name': 'Jupiter'
+	};
+
+	this.MERCURY_INFO = {
+		'pl_eqt': 449,
+		'pl_orbsmax': 0.39,
+		'st_teff': 5777,
+		'pl_rade': 0.383,
+		'pl_discmethod': '',
+		'pl_name': 'Mercury'
+	};
+
+	this.NEPTUNE_INFO = {
+		'pl_eqt': 46.6,
+		'pl_orbsmax': 30.047,
+		'st_teff': 5777,
+		'pl_rade': 3.883,
+		'pl_discmethod': '',
+		'pl_name': 'Neptune'
+	};
+
+	this.SPECIAL_PLANETS = [this.MERCURY_INFO, this.EARTH_INFO, this.JUPITER_INFO, this.NEPTUNE_INFO];
+
 	this.zoom = d3.behavior.zoom()
 		.scaleExtent([0.1, 300])
 		.scale(0.75)
@@ -16,37 +63,72 @@ var TemperatureVisualisation = function() {
 		});
 	this.svg.call(this.zoom);
 
+	this.planetZoom = d3.behavior.zoom()
+		.scaleExtent([0.1, 10])
+		.scale(this.DEFAULT_PLANET_SCALE)
+		.on('zoom', function() {
+			self._setPlanetScales();
+		});
+
+	this.colorScale = d3.scale.linear()
+		.domain([this.COLOR_LEGEND_MIN_TEMP, this.COLOR_LEGEND_AVG_TEMP, this.COLOR_LEGEND_MAX_TEMP])
+		.range(['blue', 'yellow', 'red']);
+
 	this._createSliders();
 };
 
 TemperatureVisualisation.prototype.draw = function () {
 	this._drawPlanets();
+	this._scaleX();
+	this._setPlanetScales();
+	this._setPlanetColors();
 	this._createAxes();
+	this._createColorLegend();
+	this._drawSpecialPlanetIndicators();
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
 	var self = this;
+	var tooltip = d3.select('#tooltip');
 	var svgSize = this._getSvgSize();
 	var selectedPlanets = dataHandler.selectedData.filter(function(element) {
 		return element['pl_eqt'] != '' && element['pl_orbsmax'] != '';
 	});
+	for (var i = 0; i < this.SPECIAL_PLANETS.length; i++) {
+		selectedPlanets.push(this.SPECIAL_PLANETS[i]);
+	}
+
 	this.linearYScale = d3.scale.linear()
 		.domain([0, 3000])
 		.range([svgSize.height - this.CHART_Y_OFFSET, this.CHART_Y_TOP_OFFSET]);
-	var colorScale = d3.scale.linear()
-		.domain([100, 3000, 7500])
-		.range(['blue', 'yellow', 'red']);
-	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
+	var planets = this.svg.select('g.planets').selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
-	planets.enter().append('circle');
+	planets.enter().append('circle')
+		.on('mouseover', function(d) {
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', .95);
+			tooltip.html('<b>' + d['pl_name'] + '</b><br/>' +
+					'Radius: ' + ((d['pl_rade'] == '')? '?' : d['pl_rade'] + ' Earth radii') + '<br/>' +
+					'Temperature: ' + ((d['pl_eqt'] == '')? '?' : d3.format('.0f')(d['pl_eqt']) + ' K') + '<br/>' +
+					'Host star distance: ' + ((d['pl_orbsmax'] == '')? '?' : d3.format('.3f')(d['pl_orbsmax']) + ' AU') + '<br/>' +
+					'Host star temperature: ' + ((d['st_teff'] == '')? '?' : d3.format('.0f')(d['st_teff']) + ' K') + '<br/>'
+			)
+				.style('left', (d3.event.pageX + 10) + 'px')
+				.style('top', (d3.event.pageY + 10) + 'px');
+		})
+		.on('mouseout', function(d) {
+			tooltip.transition()
+				.duration(500)
+				.style('opacity', 0);
+		});
 	planets.classed('planet', true)
 		.attr('cy', function(d) {return self.linearYScale(+d['pl_eqt'])})
-		.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return colorScale(+d['st_teff']);})
 		.attr('name', function(d) {return +d['st_teff']})
 		.attr('opacity', '0.75')
+		.attr('fill', 'black')
 		.attr('r', 4);
-
-	this._scaleX();
+	var coloringMethod = $('#temperature-planet-colors-select').val();
 };
 
 TemperatureVisualisation.prototype._scaleX = function () {
@@ -60,6 +142,36 @@ TemperatureVisualisation.prototype._scaleX = function () {
 	this.svg.selectAll('circle.planet')
 		.attr('cx', function(d) {return self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)});
 	this._createAxes();
+
+	this.svg.selectAll('g.indicator').attr('transform', function(d) {return 'translate(' + (self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)) + ',' + self.linearYScale(+d['pl_eqt']) + ')'});
+};
+
+TemperatureVisualisation.prototype._setPlanetScales = function () {
+	var size = this._getSvgSize();
+
+	$('#temperature-planet-slider').slider('value', this.planetSliderScaler(this.planetZoom.scale()));
+	var scale = this.planetZoom.scale();
+	var usePlanetScale = $('#temperature-planet-scale-checkbox').prop('checked');
+	this.svg.selectAll('circle.planet')
+		.attr('r', function(d) {
+			var radius = 10;
+			if (usePlanetScale)
+				radius = +d['pl_rade'];
+			return  radius * scale;
+		});
+};
+
+TemperatureVisualisation.prototype._setPlanetColors = function () {
+	var self = this;
+	var planets = this.svg.selectAll('circle.planet');
+	var coloringMethod = $('#temperature-planet-colors-select').val();
+	if(coloringMethod == 'star-temperature') {
+		planets.attr('fill', function(d) {if(d['st_teff'] == '') return 'black'; else return self.colorScale(+d['st_teff']);});
+		this.svg.select('g.color-legend').attr('style', 'visibility:visible');
+	} else {
+		planets.attr('fill', function(d) {return (d['pl_discmethod'] != '')? dataHandler.discoveryMethodsColorMap(d['pl_discmethod']) : 'black';});
+		this.svg.select('g.color-legend').attr('style', 'visibility:hidden');
+	}
 };
 
 TemperatureVisualisation.prototype._getSvgSize = function () {
@@ -101,11 +213,17 @@ TemperatureVisualisation.prototype._createSliders = function () {
 	});
 
 	$('#temperature-planet-slider').on('slide', function(event, ui) {
-		self.rescalePlanets(self.planetSliderScaler.invert(ui.value));
+		self.planetZoom.scale(self.planetSliderScaler.invert(ui.value));
+		// Trigger zoom event listeners
+		self.planetZoom.event(self.svg);
 	});
 
 	$('#temperature-planet-scale-checkbox').change(function() {
 		self._setPlanetScales();
+	});
+
+	$('#temperature-planet-colors-select').change(function() {
+		self._setPlanetColors();
 	})
 };
 
@@ -171,4 +289,64 @@ TemperatureVisualisation.prototype._createAxes = function () {
 		.call(xAxis);
 	this.svg.select('g.y-axis')
 		.call(yAxis);
+};
+
+TemperatureVisualisation.prototype._createColorLegend = function () {
+	var self = this;
+	var size = this._getSvgSize();
+
+	var tempScale = d3.scale.linear()
+		.domain([this.COLOR_LEGEND_MIN_TEMP, this.COLOR_LEGEND_MAX_TEMP])
+		.range([this.COLOR_LEGEND_HEIGHT, 0]);
+
+	var axis = d3.svg.axis()
+		.scale(tempScale)
+		.ticks(5)
+		.tickSize(1,0)
+		.orient('right')
+		.tickFormat(function(x) {
+			return d3.format('.0f')(x) + ' K'
+		});
+
+	var legend = this.svg.select('g.color-legend');
+	legend.attr('transform', 'translate(' + this.COLOR_LEGEND_X_OFFSET + ',' + (size.height	- this.CHART_Y_OFFSET - this.COLOR_LEGEND_HEIGHT) + ')')
+		.call(axis);
+
+	var data = [];
+	for (var i = 0; i < this.COLOR_LEGEND_HEIGHT; i++) {
+		data.push(i);
+	}
+
+	var legendLines = legend.selectAll('line.color-line').data(data);
+	legendLines.exit().remove();
+	legendLines.enter().append('line');
+	legendLines.classed('color-line', true)
+		.attr('x1', 0)
+		.attr('x2', -this.COLOR_LEGEND_WIDTH)
+		.attr('y1', function(d) {return d})
+		.attr('y2', function (d) {return d})
+		.attr('stroke', function(d) {return self.colorScale(tempScale.invert(d))});
+};
+
+TemperatureVisualisation.prototype._drawSpecialPlanetIndicators = function () {
+	var self = this;
+
+	var indicators = this.svg.select('g.planet-indicators').selectAll('g.indicator').data(this.SPECIAL_PLANETS)
+	indicators.exit().remove();
+	var newIndicators = indicators.enter().append('g');
+	indicators.classed('indicator', true)
+		.attr('transform', function(d) {return 'translate(' + (self.CHART_X_OFFSET + self.logXScale(+d['pl_orbsmax'] + 1)) + ',' + self.linearYScale(+d['pl_eqt']) + ')'})
+
+	newIndicators.append('text')
+		.text(function(d) {return d['pl_name']})
+		.attr('dy', -45)
+		.attr('dx', 2);
+
+	newIndicators.append('line')
+		.attr('x1', 0)
+		.attr('y1', 0)
+		.attr('x2', 0)
+		.attr('y2', -50)
+		.attr('stroke', 'black')
+		.attr('style', 'shape-rendering: crispEdges');
 };

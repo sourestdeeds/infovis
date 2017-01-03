@@ -65,6 +65,16 @@ body {
 	color: #FFF;
 }
 
+@media screen and (max-width: 1280px) {
+    #disc-methods label  {
+		font-size: 12px;
+	}
+
+	#disc-methods .col-sm-2 {
+		padding: 0px 10px;
+	}
+}
+
 #time #time-slider-wrapper, #radius #radius-slider-wrapper {
 	width: 100%;
 	padding-left: 80px;
@@ -90,6 +100,12 @@ footer {
 	padding-top: 45px;
 	background: #333;
 	color: #FFF;
+}
+
+@media screen and (max-width: 1060px) {
+    footer {
+    	height: 150px;
+    }
 }
 
 .ui-rangeSlider .ui-rangeSlider-innerBar {
@@ -170,7 +186,7 @@ footer {
 #temperature .axis line, #temperature .axis path {
 	fill: none;
 	stroke:black;
-	shape-rendering: crisEdges;
+	shape-rendering: crispEdges;
 }
 
 .earth-legend-color-block {
@@ -179,6 +195,33 @@ footer {
 	display: inline-block;
 	margin-right: 5px;
 	border: 1px solid;
+}
+
+/** General inforbar styling **/
+
+.infobar {
+	z-index: 100;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.infobar .panel-title {
+	float: right;
+}
+
+.infobar .panel-heading-bottom {
+	clear: both;
+}
+
+.infobar {
+	max-width: 300px;
+}
+
+.infobar .panel-body {
+	max-height: 400px;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 /** Worldmap style **/
@@ -207,4 +250,16 @@ footer {
 	border-left:1px solid #AAA;
 	float: left;
 	background: #04061f;
+}
+
+#tooltip {
+	position: absolute;
+	text-align: left;
+	padding: 5px;
+	font-size: 12px;
+	background: lightsteelblue;
+	border: 0px;
+	border-radius: 8px;
+	pointer-events: none;
+	z-index: 100;
 }

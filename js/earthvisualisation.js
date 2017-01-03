@@ -36,7 +36,7 @@ var EarthVisualisation = function() {
 
 EarthVisualisation.prototype.draw = function () {
 	var self = this;
-
+	var tooltip = d3.select('#tooltip');
 	var center = this._getSvgCenter();
 	var size = this._getSvgSize();
 
@@ -49,9 +49,27 @@ EarthVisualisation.prototype.draw = function () {
 
 	this._calcDiscoveryMethodDistribution(selectedPlanets);
 
-	var planets = this.svg.selectAll('circle.planet').data(selectedPlanets);
+	var planets = this.svg.select('g.planets').selectAll('circle.planet').data(selectedPlanets);
 	planets.exit().remove();
-	planets.enter().append('circle');
+	planets.enter().append('circle')
+		.on('mouseover', function(d) {
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', .95)
+			tooltip.html('<b>' + d['pl_name'] + '</b><br/>' +
+					'Radius: ' + ((d['pl_rade'] == '')? '?' : d['pl_rade'] + ' Earth radii') + '<br/>' +
+					'Distance from Earth: ' + ((d['st_dist'] == '')? '?' : d3.format('.0f')(d['st_dist']) + ' pc') + '<br/>'
+				)
+				.style('left', (d3.event.pageX + 10) + 'px')
+				.style('top', (d3.event.pageY + 10) + 'px');
+			}
+		)
+		.on('mouseout', function(d) {
+			tooltip.transition()
+				.duration(500)
+				.style('opacity', 0);
+			}
+		);
 	planets.classed('planet', true)
 		.attr('cx', center.x)
 		.attr('fill', 'black')
@@ -117,7 +135,8 @@ EarthVisualisation.prototype._setPlanetScaledPositions = function () {
 		.domain([0, this.DEFAULT_SCALE_DISTANCE / this.zoom.scale()])
 		.range([0,maxY]);
 	this.svg.selectAll('circle.planet')
-		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])});
+		.attr('cy', function(d) {return centerY - scaler(+d['st_dist'])})
+		.attr('style', function (d) {return (d['st_dist'] == '')? 'visibility:hidden' : ''});
 	this.scaleIndications
 		.attr('opacity', function(d) {return (scaler(d) < 20)? 0 : 1})
 		.attr('r', function(d) {return scaler(d)});
@@ -289,7 +308,7 @@ EarthVisualisation.prototype._createPieChart = function () {
 	if (disablePieChart)
 		return;
 
-	var pie = this.svg.append('g')
+	var pie = this.svg.select('g.pie-container').append('g')
 		.attr('id', 'pie')
 		.attr('transform', 'translate(' + center.x + ',' + center.y + ')');
 
@@ -305,13 +324,13 @@ EarthVisualisation.prototype._createPieChart = function () {
 };
 
 EarthVisualisation.prototype._createScaleIndications = function () {
-	var data = [Math.pow(10,1),Math.pow(10,1.5),Math.pow(10,2),Math.pow(10,2.5),Math.pow(10,3),Math.pow(10,3.5),Math.pow(10,4)]
+	var data = [1,3,10,30,100,300,1000,3000,10000]
 	this.scaleIndications = this.svg.selectAll('circle.scale-indications').data(data);
 	this.scaleIndications.enter().append('circle');
 	this.scaleIndications.classed('scale-indications', true)
-		.attr('stroke', '#DDDDDD')
+		.attr('stroke', '#AAAAAA')
 		.attr('stroke-width', 1)
-		.attr('opacity', 0.5)
+		.attr('opacity', 1.0)
 		.attr('fill', 'none');
 	this.scaleIndicationLabels = this.svg.selectAll('text.scale-indication-labels').data(data);
 	this.scaleIndicationLabels.enter().append('text');

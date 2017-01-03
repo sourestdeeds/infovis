@@ -4,8 +4,10 @@ function onResize() {
 	var footerHeight = $('footer').outerHeight();
 	var tabpaneHeight = windowHeight - navbarHeight - footerHeight;
 
-	$('body').css('padding-top', navbarHeight)
-	$('.tab-pane').css('height', tabpaneHeight)
+	$('body').css('padding-top', navbarHeight);
+	$('.tab-pane').css('height', tabpaneHeight);
+
+	$('.infobar .panel-body').css('max-height', tabpaneHeight - 100);
 
 	visualisationManager.onWindowResize();
 }

@@ -4,6 +4,7 @@ var StackedAreaPlot = function() {
 }
 
 StackedAreaPlot.prototype.draw = function() {
+    var colors = this._colorMapping();
     var methods = this._discMethods(dataHandler.selectedData);
     var hists = this._hists(methods);
     var groups = [];
@@ -19,30 +20,44 @@ StackedAreaPlot.prototype.draw = function() {
         types[group] = 'area';
     });
     
-    if (this.chart == null) {
+    //if (this.chart == null) {
         this.chart = c3.generate({
             'bindto': '#stacked-area-plot-div',
             'data': {
                 'columns': hists,
                 'types': types,
-                'groups': [groups]
+                'groups': [groups],
+                'colors': colors
             },
             'axis': {
                 'x': {
                     'type': 'category',
                     'categories': ticks
                 }
+            },
+            'point': {
+                'show': false
+            },
+            'grid': {
+                'x': {
+                    'lines': [
+                        {
+                            'value': '2009',
+                            'text': 'Kepler Launch'
+                        }
+                    ]
+                }
             }
         });
-    } else {
-        this.chart.load({
-            'columns': hists,
-            'types': types,
-            'groups': [groups],
-            'categories': ticks,
-            'unload': true
-        });
-    }
+    // } else {
+    //     this.chart.load({
+    //         'columns': hists,
+    //         'types': types,
+    //         'groups': [groups],
+    //         'categories': ticks,
+    //         'unload': true
+    //     });
+    // }
 }
 
 StackedAreaPlot.prototype._discMethods = function(data) {
@@ -98,3 +113,12 @@ StackedAreaPlot.prototype._generateXTicks = function() {
     return ticks;
 }
 
+StackedAreaPlot.prototype._colorMapping = function() {
+    var methods = dataHandler.discoveryMethodsColorMap.domain()
+    var colors = dataHandler.discoveryMethodsColorMap.range()
+    var colormap = {}
+    methods.forEach(function(method, index) {
+        colormap[method] = colors[index];
+    });
+    return colormap;
+}
