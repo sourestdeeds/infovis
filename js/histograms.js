@@ -26,9 +26,11 @@ HistogramVisualisation.prototype.draw = function() {
             var cell = document.createElement('div');
             var index = i * this.tableSide + j;
             var cellId = 'histCell' + index;
+            var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
             
             cell.setAttribute('id', cellId);
             cell.setAttribute('class', 'histCell');
+            cell.setAttribute('title', tooltipText);
             cell.style.width = cellSide + 'px';
             cell.style.height = cellSide + 'px';
             
@@ -66,7 +68,7 @@ HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
 HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn) {
     var data = dataHandler.selectedData;
     
-    data = this._groupPerMethod(data, function(entry) {
+    grouped = this._groupPerMethod(data, function(entry) {
         var sma = entry[dataColumn];
         
         if (sma === "") {
@@ -76,7 +78,7 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn)
         }
     });
     
-    var hists = this._hists(data);
+    var hists = this._hists(grouped);
     var groups = [];
     var types = {};
     
