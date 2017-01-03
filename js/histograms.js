@@ -1,20 +1,51 @@
 var HistogramVisualisation = function() {
     this.tabID = '#histograms';
-    this.dataColumns = ['pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax', 'pl_orbsmax'];
     this.div = document.getElementById('histograms-div');
     this.PADDING = 20;
+    this.DATA_COUNT_THRESH = 100;
+    
+    this._initializeSelection();
+}
+
+HistogramVisualisation.prototype._initializeSelection = function() {
+    this.dataColumns = [
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_bmasse',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax',
+        'pl_orbsmax'
+    ];
     
     if (!this._isPerfectSquare(this.dataColumns.length)) {
         throw new Error("Amount of dataColumns in HistogramVisualisation must be a perfect square.");
     } else {
         this.tableSide = Math.sqrt(this.dataColumns.length);
     }
+    
+    this.isLog = [];
+    var self = this;
+    
+    this.dataColumns.forEach(function(entry) {
+        self.isLog.push(true);
+    });
 }
 
 HistogramVisualisation.prototype.draw = function() {
     this.div.innerHTML = '';
-    var cellSide = Math.round(Math.min(this.div.clientWidth, this.div.clientHeight) / this.tableSide) - this.PADDING;
-    var tableWidth = ((cellSide + this.PADDING + 1) * this.tableSide) + 'px';
+    
+    this.cellSide = Math.round(Math.min(this.div.clientWidth, this.div.clientHeight) / this.tableSide) - this.PADDING;
+    var tableWidth = ((this.cellSide + this.PADDING + 1) * this.tableSide) + 'px';
     
     this.div.style.maxWidth = tableWidth;
     
@@ -23,19 +54,32 @@ HistogramVisualisation.prototype.draw = function() {
         rowDiv.style.clear = 'both';
     
         for (var j = 0; j < this.tableSide; ++j) {
-            var cell = document.createElement('div');
+            let cell = document.createElement('div');
             var index = i * this.tableSide + j;
             var cellId = 'histCell' + index;
-            var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
             
             cell.setAttribute('id', cellId);
-            cell.setAttribute('class', 'histCell');
-            cell.setAttribute('title', tooltipText);
-            cell.style.width = cellSide + 'px';
-            cell.style.height = cellSide + 'px';
+            cell.style.width = this.cellSide + 'px';
+            cell.style.height = this.cellSide + 'px';
+            
+            this._updateCell(cell, index);
+            
+            let _i = i;
+            let _j = j;
+            var self = this;
+            
+            cell.onclick = function() {
+                cell.innerHTML = '';
+                let index = _i * self.tableSide + _j;
+                self.isLog[index] = !self.isLog[index];
+                self._updateCell(cell, index);
+                
+                setTimeout(function() {
+                    self._attachHistogram('histCell' + index, self.isLog[index], self.dataColumns[index]);
+                }, 0);
+            };
             
             this._setMargin(i, j, cell);
-            
             rowDiv.appendChild(cell);
         }
         
@@ -46,9 +90,16 @@ HistogramVisualisation.prototype.draw = function() {
     
     setTimeout(function() {
         for (var i = 0; i < self.dataColumns.length; ++i) {
-            self._attachHistogram('histCell' + i, self.dataColumns[i]);
+            self._attachHistogram('histCell' + i, self.isLog[i], self.dataColumns[i]);
         }
     }, 0);
+}
+
+HistogramVisualisation.prototype._updateCell = function(cell, index) {
+    cell.setAttribute('class', 'histCell' + (this.isLog[index] ? ' log' : ''));
+    var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
+    tooltipText += this.isLog[index] ? ' (LOG)' : ' (LIN)';
+    cell.setAttribute('title', tooltipText);
 }
 
 HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
@@ -65,20 +116,21 @@ HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
     }
 }
 
-HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn) {
+HistogramVisualisation.prototype._attachHistogram = function(cellId, isLog, dataColumn) {
     var data = dataHandler.selectedData;
     
     grouped = this._groupPerMethod(data, function(entry) {
-        var sma = entry[dataColumn];
+        var value = Number(entry[dataColumn]);
         
-        if (sma === "") {
+        if (isNaN(value) || value === 0) {
             return null;
         } else {
-            return Math.log(Number(sma) + Math.exp(1));
+            return isLog ? Math.log(value + Math.exp(1)) : value;
         }
     });
     
-    var hists = this._hists(grouped);
+    var filtered = this._filter(grouped);
+    var hists = this._hists(filtered);
     var groups = [];
     var types = {};
     
@@ -94,7 +146,8 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn)
         'bindto': '#' + cellId,
         'data': {
             'columns': hists,
-            'types': types
+            'types': types,
+            'colors': StackedAreaPlot.prototype._colorMapping()
         },
         'axis': {
             'x': {'show': false},
@@ -110,6 +163,22 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, dataColumn)
             'show': false
         }
     });
+    
+    console.log('drawn' + cellId + ':' + dataColumn);
+}
+
+HistogramVisualisation.prototype._filter = function(grouped) {
+    var filtered = {};
+    
+    for (var method in grouped) {
+        if (grouped.hasOwnProperty(method)) {
+            if (grouped[method].length >= this.DATA_COUNT_THRESH) {
+                filtered[method] = grouped[method];
+            }
+        }
+    }
+    
+    return filtered;
 }
 
 HistogramVisualisation.prototype._groupPerMethod = function(data, selector) {
@@ -119,7 +188,7 @@ HistogramVisualisation.prototype._groupPerMethod = function(data, selector) {
         var method = entry['pl_discmethod'];
         var value = selector(entry);
         
-        if (value) {
+        if (value != null) {
             if (method in methods) {
                 methods[method].push(value);
             } else {
@@ -162,12 +231,27 @@ HistogramVisualisation.prototype._hists = function(methods) {
                     hist.push(bin.y / sum);
                 });
                 
+                hist = this._smooth(hist);
                 hists.push([method].concat(hist));
             }
         }
     }
     
     return hists;
+}
+
+HistogramVisualisation.prototype._smooth = function(a) {
+    var b = [];
+    
+    a.forEach(function(entry) {
+        b.push(0.0);
+    });
+
+    for (var i = 2; i < a.length - 2; ++i) {
+        b[i] = (0.5 * a[i - 2] + a[i - 1] + a[i] + a[i + 1] + 0.5 * a[i + 2]) / 4.0;
+    }
+    
+    return b;
 }
 
 HistogramVisualisation.prototype._isPerfectSquare = function(x) {
