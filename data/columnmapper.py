@@ -17,6 +17,10 @@ def main():
         for line in f:
             if line.startswith(HEADER):
                 name, description = (line[len(HEADER):]).split(':')
+                
+                if '[' in description:
+                    description = description.split('[')[0]
+                
                 obj[name.strip()] = description.strip()
     
     with open('columns.json', 'w') as f:

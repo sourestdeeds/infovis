@@ -2,7 +2,7 @@ var HistogramVisualisation = function() {
     this.tabID = '#histograms';
     this.div = document.getElementById('histograms-div');
     this.PADDING = 20;
-    this.DATA_COUNT_THRESH = 100;
+    this.DATA_COUNT_THRESH = 30;
     
     this._initializeSelection();
 }
@@ -10,21 +10,14 @@ var HistogramVisualisation = function() {
 HistogramVisualisation.prototype._initializeSelection = function() {
     this.dataColumns = [
         'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
+        'pl_orbper',
         'pl_bmasse',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax',
-        'pl_orbsmax'
+        'pl_orbeccen',
+        'pl_pnum',
+        'st_age',
+        'st_dist',
+        'st_mass',
+        'ra'
     ];
     
     if (!this._isPerfectSquare(this.dataColumns.length)) {
@@ -37,7 +30,7 @@ HistogramVisualisation.prototype._initializeSelection = function() {
     var self = this;
     
     this.dataColumns.forEach(function(entry) {
-        self.isLog.push(true);
+        self.isLog.push(false);
     });
 }
 
@@ -98,7 +91,7 @@ HistogramVisualisation.prototype.draw = function() {
 HistogramVisualisation.prototype._updateCell = function(cell, index) {
     cell.setAttribute('class', 'histCell' + (this.isLog[index] ? ' log' : ''));
     var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
-    tooltipText += this.isLog[index] ? ' (LOG)' : ' (LIN)';
+    tooltipText += this.isLog[index] ? ' (Logarithmic)' : ' (Linear)';
     cell.setAttribute('title', tooltipText);
 }
 
@@ -163,8 +156,6 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, isLog, data
             'show': false
         }
     });
-    
-    console.log('drawn' + cellId + ':' + dataColumn);
 }
 
 HistogramVisualisation.prototype._filter = function(grouped) {
@@ -215,7 +206,7 @@ HistogramVisualisation.prototype._hists = function(methods) {
     for (var method in methods) {
         if (methods.hasOwnProperty(method)) {
             var bins = d3.layout.histogram()
-                .bins(40)
+                .bins(20)
                 .range(bounds)
                 (methods[method]);
             
