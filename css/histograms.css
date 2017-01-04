@@ -11,14 +11,19 @@
 
 .histCell {
     float: left;
-    background-color: #f2f7ff;
+    background-color: #f7f7f9;
     border: 1px solid white;
 }
 
 .histCell.log {
-    background-color: #f2fffc;
+    
 }
 
 .histCell:hover {
-    border: 1px solid #f2faff;
+    border: 1px solid #f0f0f0;
+}
+
+.histCell .c3-title {
+    fill: #d0d0de;
+    font-size: 10px;
 }

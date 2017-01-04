@@ -68,7 +68,7 @@ HistogramVisualisation.prototype.draw = function() {
                 self._updateCell(cell, index);
                 
                 setTimeout(function() {
-                    self._attachHistogram('histCell' + index, self.isLog[index], self.dataColumns[index]);
+                    self._attachHistogram(index, 'histCell' + index, self.isLog[index], self.dataColumns[index]);
                 }, 0);
             };
             
@@ -83,7 +83,7 @@ HistogramVisualisation.prototype.draw = function() {
     
     setTimeout(function() {
         for (var i = 0; i < self.dataColumns.length; ++i) {
-            self._attachHistogram('histCell' + i, self.isLog[i], self.dataColumns[i]);
+            self._attachHistogram(i, 'histCell' + i, self.isLog[i], self.dataColumns[i]);
         }
     }, 0);
 }
@@ -91,7 +91,6 @@ HistogramVisualisation.prototype.draw = function() {
 HistogramVisualisation.prototype._updateCell = function(cell, index) {
     cell.setAttribute('class', 'histCell' + (this.isLog[index] ? ' log' : ''));
     var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
-    tooltipText += this.isLog[index] ? ' (Logarithmic)' : ' (Linear)';
     cell.setAttribute('title', tooltipText);
 }
 
@@ -109,7 +108,7 @@ HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
     }
 }
 
-HistogramVisualisation.prototype._attachHistogram = function(cellId, isLog, dataColumn) {
+HistogramVisualisation.prototype._attachHistogram = function(index, cellId, isLog, dataColumn) {
     var data = dataHandler.selectedData;
     
     grouped = this._groupPerMethod(data, function(entry) {
@@ -135,6 +134,8 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, isLog, data
         types[group] = 'spline';
     });
     
+    var self = this;
+    
     var chart = c3.generate({
         'bindto': '#' + cellId,
         'data': {
@@ -154,6 +155,9 @@ HistogramVisualisation.prototype._attachHistogram = function(cellId, isLog, data
         },
         'legend': {
             'show': false
+        },
+        'title': {
+            'text': self.isLog[index] ? 'logaritmic' : 'linear'
         }
     });
 }
