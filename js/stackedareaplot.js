@@ -47,6 +47,9 @@ StackedAreaPlot.prototype.draw = function() {
                         }
                     ]
                 }
+            },
+            'legend': {
+                'show': false
             }
         });
     // } else {
