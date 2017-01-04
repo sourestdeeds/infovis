@@ -171,8 +171,6 @@ WorldMapVisualisation.prototype.drawSpaceTelescopes = function(telescopes) {
 			(function(name, telescope, height) {
 				var size = telescope.length;
 
-				console.log(size, 2*Math.sqrt(size / (300 / height)), (300 / height), height);
-
 				var gpoint = self.gSpace.append('g').attr('class', 'gpoint');
 				if (size == 0)
 					return;
