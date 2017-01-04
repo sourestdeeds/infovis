@@ -42,17 +42,18 @@ def main():
     formatstring = ('%%%ds ' % colwidth) * len(columns)
     formatstring += ('%%%ds' % colwidth)
     
-    print(formatstring % ('', *columns))
-    
-    for method in data:
-        total, percolumn = data[method]
-        fractions = []
+    with open('presence.txt', 'w') as f:
+        print(formatstring % ('', *columns), file = f)
         
-        for column in columns:
-            fraction = round((percolumn[column] / total) * 100.0)
-            fractions.append(str(fraction) + '%')
-        
-        print(formatstring % ((methods[method] + ' (%4d)' % total), *fractions))
+        for method in data:
+            total, percolumn = data[method]
+            fractions = []
+            
+            for column in columns:
+                fraction = round((percolumn[column] / total) * 100.0)
+                fractions.append(str(fraction) + '%')
+            
+            print(formatstring % ((methods[method] + ' (%4d)' % total), *fractions), file = f)
 
 
 if __name__ == '__main__':
