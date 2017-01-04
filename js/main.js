@@ -15,6 +15,7 @@ function main() {
 	visualisationManager.addVisualisation(new StackedAreaPlot());
 	visualisationManager.addVisualisation(new WorldMapVisualisation());
 	visualisationManager.addVisualisation(new OrbitsVisualisation());
+	visualisationManager.addVisualisation(new HistogramVisualisation());
 
 	dataHandler.onDataLoaded(function() {
 		dataHandler.initFilter();
