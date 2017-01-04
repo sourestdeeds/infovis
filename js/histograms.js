@@ -90,8 +90,6 @@ HistogramVisualisation.prototype.draw = function() {
 
 HistogramVisualisation.prototype._updateCell = function(cell, index) {
     cell.setAttribute('class', 'histCell' + (this.isLog[index] ? ' log' : ''));
-    var tooltipText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
-    cell.setAttribute('title', tooltipText);
 }
 
 HistogramVisualisation.prototype._setMargin = function(i, j, cell) {
@@ -135,6 +133,8 @@ HistogramVisualisation.prototype._attachHistogram = function(index, cellId, isLo
     });
     
     var self = this;
+    var titleText = dataHandler.COLUMN_DESCRIPTIONS[this.dataColumns[index]];
+    titleText += self.isLog[index] ? ' (Logaritmic)' : ' (Linear)';
     
     var chart = c3.generate({
         'bindto': '#' + cellId,
@@ -157,7 +157,7 @@ HistogramVisualisation.prototype._attachHistogram = function(index, cellId, isLo
             'show': false
         },
         'title': {
-            'text': self.isLog[index] ? 'logaritmic' : 'linear'
+            'text': titleText
         }
     });
 }
