@@ -254,6 +254,42 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="histograms">
                 <div id="histograms-div"></div>
+                <div class="infobar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Info
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#histograms-info" aria-expanded="false" aria-controls="histograms-info">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+						</h3>
+						<div class="panel-heading-bottom"></div>
+					</div>
+					<div id="histograms-info" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h3>Description</h3>
+								<p>
+									Each item in the table contains a collection of <b>normalized histograms</b> visualising the <b>distribution</b> of <b>planetary/stellar properties</b> per <b>method of discovery</b>.
+									Each method of discovery has its own coloured curve (see the legend below).
+									This visualisation is intended to find out what <b>observer bias</b> is induced by certain methods of discovery, and for which planetary/stellar properties.
+								</p>
+								
+								<h3>Notes</h3>
+								<p>
+									Methods of discovery providing an <b>insufficient amount</b> of data points for a given planetary/stellar property are <b>filtered out</b> as they would not generate representative histograms.
+									All histograms within the same item are normalized and scaled to match one another.
+									A slight amount of <b>smoothing</b> is applied to the curves to ease visual interpretation.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									<b>Hovering</b> over an item will reveal the <b>planetary/stellar property</b> represented by the histograms.
+									<b>Clicking</b> on an item will <b>toggle</b> between a <b>linear</b> and <b>logarithmic</b> histogram, as indicated at the top of each item.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -11,7 +11,7 @@
 
 .histCell {
     float: left;
-    background-color: #f7f7f9;
+    background-color: #fcfcff;
     border: 1px solid white;
 }
 
@@ -24,6 +24,10 @@
 }
 
 .histCell .c3-title {
-    fill: #d0d0de;
+    fill: #d7d7df;
     font-size: 10px;
+}
+
+#histograms .infobar {
+	margin-top: 40px;
 }
