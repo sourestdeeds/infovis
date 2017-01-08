@@ -1,7 +1,14 @@
-var Slider = function(sliderID, range, callback) {
+var Slider = function(sliderID, range, callback, formatter) {
     this.ID = sliderID;
     this.range = range;
     this.cb = callback;
+    this.formatter = formatter
+
+    if (this.formatter === undefined) {
+        this.formatter = function(val) {
+            return val;
+        }
+    }
 }
 
 Slider.prototype.setup = function() {
@@ -10,7 +17,8 @@ Slider.prototype.setup = function() {
     $(this.ID).rangeSlider({
 	    bounds: r,
 	    defaultValues: r,
-        step: 1
+        step: 1,
+        formatter: this.formatter
     });
 
     $(this.ID).bind('valuesChanging', this.cb);
@@ -26,4 +34,6 @@ var radiusSlider = new Slider('#radiusSlider', {min: 0, max: 80}, function(e, da
     dataHandler.setRadiusRange(data.values.min, data.values.max);
     dataHandler.filterData();
     visualisationManager.updateAll();
+}, function(val) {
+    return val + ' Earth Radii';
 });

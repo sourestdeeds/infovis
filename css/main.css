@@ -216,9 +216,17 @@ footer {
 
 /** Worldmap style **/
 
+#worldmap {
+	position: relative;
+}
+
+#worldmap .infobar {
+	right: 310px;
+}
+
 #pie-chart-wrapper {
 	position: absolute;
-	bottom: 130px;
+	bottom: 15px;
 	left: 10px;
 	display: none;
 }
@@ -252,4 +260,5 @@ footer {
 	border-radius: 8px;
 	pointer-events: none;
 	z-index: 100;
+	box-shadow: 1px 1px 5px #000;
 }

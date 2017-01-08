@@ -104,6 +104,7 @@ DataHandler.prototype.initFilter = function() {
 	}
 	self.timeFilterOn = true;
 	self.radiusFilterOn = false;
+    $('#radius-slider-wrapper').hide();
 
 	for (var i = 0; i < self.discoveryMethods.length/2; i++) {
 		var meth1 = self._createDiscoveryMethodFilterHTML(self.discoveryMethods[2*i]);
@@ -118,11 +119,13 @@ DataHandler.prototype.initFilter = function() {
 
 	$('#time-checkbox').on('change', function() {
 		self.timeFilterOn = this.checked;
+        $('#time-slider-wrapper').toggle();
 		self.filterData();
 		visualisationManager.updateAll();
 	});
 	$('#radius-checkbox').on('change', function() {
 		self.radiusFilterOn = this.checked;
+        $('#radius-slider-wrapper').toggle();
 		self.filterData();
 		visualisationManager.updateAll();
 	});

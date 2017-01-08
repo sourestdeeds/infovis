@@ -54,6 +54,43 @@
 				<svg id="worldmap-space-svg">
 				</svg>
 
+				<div class="infobar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Info
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#worldmap-info" aria-expanded="false" aria-controls="worldmap-info">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+						</h3>
+						<div class="panel-heading-bottom"></div>
+					</div>
+					<div id="worldmap-info" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h3>Description</h3>
+								<p>
+									The <b>worldmap</b> visualizes the facilities where exoplanets were discovered. 
+									Each <b>circle</b> on the chart represents a facility where atleast one exoplanet was discovered and for which enough data was available to locate it.
+									The <b>size</b> of a circle indicates the number of exoplanet that were discovered at this facility.
+									On the right side of the screen, we also visualized some space telescopes that were used to discover exoplanets.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+									We were unable to locate the discovery facility for every exoplanet. Therefore, there are certain exoplanets that are not covered by this visualization although we tried to limit this number as much as possible.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									You can click on the circle representing a discovery facility to see a breakdown of the <b>telescopes</b> that were used at this facility. You can also see a breakdown of the <b>discovery methods</b> that were used.
+
+									You can use the <b>scroll wheel</b> to zoom in on certain areas on the map. You can click and drag to move the map around.
+ 								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div id="pie-chart-wrapper">
 					<div class="toolbar panel panel-default">
 						<div class="panel-heading">

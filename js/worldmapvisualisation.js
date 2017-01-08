@@ -125,6 +125,8 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 	var x = self.projection([lon,lat])[0];
 	var y = self.projection([lon,lat])[1];
 
+	var tooltip = d3.select('#tooltip');
+
 	if (size === 0)
 		return;
 
@@ -139,9 +141,19 @@ WorldMapVisualisation.prototype.drawPoint = function(name, bucket) {
 		.attr('fill-opacity', 0.3)
 		.on('mouseover', function() {
 			d3.select(this).attr('stroke', '#348D61').attr('fill', '#348D61');
+			tooltip.transition()
+				.duration(200)
+				.style('opacity', .95)
+			tooltip.html('<b>' + name + '</b><br/>')
+				tooltip.style('left', (d3.event.pageX + 10) + 'px')
+				.style('top', (d3.event.pageY + 10) + 'px');
 		})
 		.on('mouseout', function() {
 			d3.select(this).attr('stroke', '#B80004').attr('fill', '#B80004');
+
+			tooltip.transition()
+				.duration(500)
+				.style('opacity', 0);
 		})
 		.on('click', function() {
 			self.drawPieCharts(name, bucket);
