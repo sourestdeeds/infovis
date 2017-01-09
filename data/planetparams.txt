@@ -1,0 +1,1 @@
+['pl_bmasse', 'pl_dens', 'pl_eqt', 'pl_imppar', 'pl_impparlim', 'pl_insol', 'pl_occdep', 'pl_orbeccen', 'pl_orbincl', 'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper', 'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp']
