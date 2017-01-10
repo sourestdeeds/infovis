@@ -32,6 +32,11 @@ var EarthVisualisation = function() {
 
 	this.discoveryMethodsSelection = {};
 	dataHandler.onDataLoaded(function() {self._createLegend()});
+
+
+	this.svg.on('click', function() {
+		dataHandler.toggleHighlightedPlanet(null);
+	});
 }
 
 EarthVisualisation.prototype.draw = function () {
@@ -69,11 +74,30 @@ EarthVisualisation.prototype.draw = function () {
 				.duration(500)
 				.style('opacity', 0);
 			}
-		);
+		)
+		.on('click', function(d) {
+			dataHandler.toggleHighlightedPlanet(d);
+			d3.event.stopPropagation();
+		})
+		;
 	planets.classed('planet', true)
 		.attr('cx', center.x)
 		.attr('fill', 'black')
-		.attr('opacity', '0.5')
+		.attr('opacity', function(d) {
+			if(dataHandler.highlightedPlanet == null)
+			 	return '0.5';
+			if(dataHandler.highlightedPlanet['rowid'] == d['rowid'])
+				return '1.0';
+			else
+				return '0.2';
+		})
+		.attr('stroke', 'black')
+		.attr('stroke-width', function(d) {
+			if(dataHandler.highlightedPlanet != null && dataHandler.highlightedPlanet['rowid'] == d['rowid'])
+				return 1;
+			else
+				return 0;
+		})
 		.attr('r', 1);
 
 	this.scaleIndications

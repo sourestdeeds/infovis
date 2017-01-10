@@ -9,10 +9,11 @@ var DataHandler = function(dataFile, locationsFile) {
 	this.selectedData = [];
 	this.selectedDataAllMethods = [];
 	this.highlightedData = [];
+	this.highlightedPlanet = null;
 	this.discoveryMethods = [];
 	this.discoveryMethodFilter = {}
 	this.discoveryMethodsColorMap = d3.scale.ordinal().range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#cfa36b', '#bcbd22', '#17becf']);
-	
+
 	this.dataLoadedCallbackQueue = [];
 	this.currentRange = undefined;
 	this.currentRadiusRange = undefined;
@@ -80,6 +81,16 @@ DataHandler.prototype.filterData = function() {
 	});
 }
 
+DataHandler.prototype.toggleHighlightedPlanet = function(selectedPlanet) {
+	if(this.highlightedPlanet == null || selectedPlanet == null || this.highlightedPlanet['rowid'] != selectedPlanet['rowid']) {
+		this.highlightedPlanet = selectedPlanet;
+	}
+	else {
+		this.highlightedPlanet = null;
+	}
+	visualisationManager.updateAll();
+}
+
 DataHandler.prototype._createDiscoveryMethods = function () {
 	this.discoveryMethods = this.data.map(function(entry) {
 		return entry['pl_discmethod'];
@@ -106,6 +117,7 @@ DataHandler.prototype.initFilter = function() {
 	}
 	self.timeFilterOn = true;
 	self.radiusFilterOn = false;
+    $('#radius-slider-wrapper').hide();
 
 	for (var i = 0; i < self.discoveryMethods.length/2; i++) {
 		var meth1 = self._createDiscoveryMethodFilterHTML(self.discoveryMethods[2*i]);
@@ -120,11 +132,13 @@ DataHandler.prototype.initFilter = function() {
 
 	$('#time-checkbox').on('change', function() {
 		self.timeFilterOn = this.checked;
+        $('#time-slider-wrapper').toggle();
 		self.filterData();
 		visualisationManager.updateAll();
 	});
 	$('#radius-checkbox').on('change', function() {
 		self.radiusFilterOn = this.checked;
+        $('#radius-slider-wrapper').toggle();
 		self.filterData();
 		visualisationManager.updateAll();
 	});

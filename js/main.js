@@ -33,3 +33,7 @@ function catchTabEvents() {
         visualisationManager.switchTo(target);
     });
 }
+
+function switchToTab(tabId) {
+	$('.nav-tabs a[href="' + tabId + '"]').tab('show');
+}

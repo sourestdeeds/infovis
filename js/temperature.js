@@ -4,7 +4,7 @@ var TemperatureVisualisation = function() {
 	this.svg = d3.select('#temperature-svg');
 
 	this.CHART_X_OFFSET = 300;
-	this.CHART_Y_OFFSET = 20;
+	this.CHART_Y_OFFSET = 35;
 	this.CHART_X_RIGHT_OFFSET = 20;
 	this.CHART_Y_TOP_OFFSET = 20;
 
@@ -75,6 +75,10 @@ var TemperatureVisualisation = function() {
 		.range(['blue', 'yellow', 'red']);
 
 	this._createSliders();
+
+	this.svg.on('click', function() {
+		dataHandler.toggleHighlightedPlanet(null);
+	});
 };
 
 TemperatureVisualisation.prototype.draw = function () {
@@ -85,6 +89,7 @@ TemperatureVisualisation.prototype.draw = function () {
 	this._createAxes();
 	this._createColorLegend();
 	this._drawSpecialPlanetIndicators();
+	this._drawLabels();
 };
 
 TemperatureVisualisation.prototype._drawPlanets = function () {
@@ -121,11 +126,29 @@ TemperatureVisualisation.prototype._drawPlanets = function () {
 			tooltip.transition()
 				.duration(500)
 				.style('opacity', 0);
+		})
+		.on('click', function(d) {
+			dataHandler.toggleHighlightedPlanet(d);
+			d3.event.stopPropagation();
 		});
 	planets.classed('planet', true)
 		.attr('cy', function(d) {return self.linearYScale(+d['pl_eqt'])})
 		.attr('name', function(d) {return +d['st_teff']})
-		.attr('opacity', '0.75')
+		.attr('opacity', function(d) {
+			if(dataHandler.highlightedPlanet == null)
+			 	return '0.75';
+			if(dataHandler.highlightedPlanet['rowid'] == d['rowid'])
+				return '1.0';
+			else
+				return '0.2';
+		})
+		.attr('stroke', 'black')
+		.attr('stroke-width', function(d) {
+			if(dataHandler.highlightedPlanet != null && dataHandler.highlightedPlanet['rowid'] == d['rowid'])
+				return 1;
+			else
+				return 0;
+		})
 		.attr('fill', 'black')
 		.attr('r', 4);
 	var coloringMethod = $('#temperature-planet-colors-select').val();
@@ -349,4 +372,27 @@ TemperatureVisualisation.prototype._drawSpecialPlanetIndicators = function () {
 		.attr('y2', -50)
 		.attr('stroke', 'black')
 		.attr('style', 'shape-rendering: crispEdges');
+};
+
+TemperatureVisualisation.prototype._drawLabels = function () {
+	var svgSize = this._getSvgSize();
+	this.svg.select('.labels').select('.label-x')
+		.attr('transform', 'translate(' + (svgSize.width - this.CHART_X_RIGHT_OFFSET) + ',' + (svgSize.height - 5) + ')')
+
+	this.svg.select('.labels').select('.label-y')
+		.attr('transform', 'translate(' + (this.CHART_X_OFFSET - 60) + ',' + (this.CHART_Y_TOP_OFFSET) + ')')
+		.select('.label-text')
+			.attr('transform', 'rotate(-90)');
+
+	this.svg.select('.color-legend').select('.label-text')
+		.attr('x', -10)
+		.attr('y', -10);
+
+	this.svg.select('.labels').selectAll('.label-text')
+		.attr('text-anchor', 'end');
+
+	this.svg.selectAll('.label-text')
+		//.style('font-style', 'italic')
+		.style('font-weight', 'bold')
+		.style('font-size', 15);
 };
