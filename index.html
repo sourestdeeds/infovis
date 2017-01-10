@@ -310,6 +310,42 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="methodquality">
                 <svg id="methodquality-svg"></svg>
+                <div class="infobar panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							Info
+							<button type="button" class="btn btn-default" aria-label="Show menu" type="button" data-toggle="collapse" data-target="#methodquality-info" aria-expanded="false" aria-controls="methodquality-info">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+						</h3>
+						<div class="panel-heading-bottom"></div>
+					</div>
+					<div id="methodquality-info" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div>
+								<h3>Description</h3>
+								<p>
+									All ten <b>methods of discovery</b> are drawn at a specific position in this diagram.
+									The <b>x-axis</b> represents the <b>overall precision</b> of the most important planetary properties (for which enough data are available). The more to the right a method is positioned, the more precise the readings of planetary properties are for planets discovered using that particular method.
+									The <b>y-axis</b> represents the <b>overall availability</b> of the most important planetary properties (for which enough data are available). The more to the top a method is positioned, the more often planetary properties are available for planets discovered using that particular method.
+								    The <b>font size</b> of a method corresponds to the <b>number of planets discovered</b> by that particular method.
+								</p>
+
+								<h3>Notes</h3>
+								<p>
+								    The availability of data is only considered for important physical planetary properties.
+									The overall precision of the discovery methods is only compared between methods for planetary properties that are <b>mostly available</b> in for all methods.
+								</p>
+
+								<h3>Tips</h3>
+								<p>
+									If a label is too small, try <b>hovering</b> over it to see a tooltip.
+									Note that using <b>radius filtering</b> in the menu below drastically affects the representativity of this visualisation, as planet radii are often unavailable.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="histograms">
                 <div id="histograms-div"></div>
