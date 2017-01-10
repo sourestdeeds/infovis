@@ -1,36 +1,66 @@
 var OrbitsVisualisation = function() {
     this.tabID = "#methodquality";
-    this.div = document.getElementById("methodquality-div");
-    this.columns = ['pl_bmasse', 'pl_dens', 'pl_eqt', 'pl_imppar', 'pl_insol', 'pl_occdep', 'pl_orbeccen', 'pl_orbincl', 'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper', 'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
+    this.columns = ['pl_bmasse', 'pl_dens', 'pl_eqt', 'pl_imppar',
+                    'pl_insol', 'pl_occdep', 'pl_orbeccen', 'pl_orbincl',
+                    'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper',
+                    'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
+    this.svg = d3.select('#methodquality-svg');
 }
 
 OrbitsVisualisation.prototype.draw = function() {
+    $("#methodquality-svg").empty();
+    
+    console.log('yes');
+
     var presence = this._presence();
     var errors = this._errors();
+    var counts = this._counts();
     
-    var data = ['data'];
-    var data_x = ['data_x'];
+    var data = [];
     
     for (method in presence) {
         if (presence.hasOwnProperty(method)) {
-            data.push(presence[method]);
-            data_x.push(errors[method]);
+            data.push({method: method, n: counts[method], x: errors[method], y: presence[method]});
         }
     }
 
-    c3.generate({
-        bindto: '#methodquality-div',
-        data: {
-            xs: {
-                'data': 'data_x'
-            },
-            columns: [
-                data_x,
-                data
-            ],
-            type: 'scatter'
+    this._drawSVG(data);
+}
+
+OrbitsVisualisation.prototype._drawSVG = function(data) {
+    var width = $('#methodquality-svg').outerWidth();
+	var height = $('#methodquality-svg').outerHeight();
+    
+    var xScale = d3.scale.linear()
+                     .domain([0, 1])
+                     .range([10, width - 10]);
+    var yScale = d3.scale.linear()
+                     .domain([0, 1])
+                     .range([10, height - 10]);
+
+    this.svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) { return xScale(d.x); })
+        .attr("cy", function(d) { return yScale(d.y); })
+        .attr("r", function(d) { return 2; });
+}
+
+OrbitsVisualisation.prototype._counts = function() {
+    var data = {};
+    
+    dataHandler.selectedData.forEach(function(entry) {
+        var method = entry['pl_discmethod'];
+        
+        if (method in data) {
+            data[method] += 1;
+        } else {
+            data[method] = 1;
         }
     });
+    
+    return data;
 }
 
 OrbitsVisualisation.prototype._presence = function() {

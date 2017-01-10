@@ -141,6 +141,12 @@ footer {
 	height: 100%;
 }
 
+#methodquality-svg {
+	width: 100%;
+	height: 100%;
+	border: 1px solid red;
+}
+
 #stacked-area-plot-div {
 	width: 100%;
 	height: 100%;
