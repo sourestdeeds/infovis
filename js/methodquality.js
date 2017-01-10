@@ -34,10 +34,44 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
     
     var xScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([160, width - 160]);
+                     .range([width - 160, 160]);
     var yScale = d3.scale.linear()
                      .domain([0, 1])
                      .range([height - 80, 80]);
+    
+    this.svg.append('line')
+        .attr('x1', 40)
+        .attr('x2', 40)
+        .attr('y1', 40)
+        .attr('y2', height - 40)
+        .attr("stroke-width", 1)
+        .attr("stroke", "black");
+    
+    this.svg.append('polyline')
+        .attr('points', '37 40, 43 40, 40 27')
+        .attr("stroke-width", 1)
+        .attr("stroke", "black");
+    
+    this.svg.append('line')
+        .attr('x1', 40)
+        .attr('x2', width - 40)
+        .attr('y1', height - 40)
+        .attr('y2', height - 40)
+        .attr("stroke-width", 1)
+        .attr("stroke", "black");
+        
+    var pts = (width - 40) + ' ' + (height - 43) + ', ' + (width - 40) + ' ' + (height - 37) + ', ' + (width - 27) + ' ' + (height - 40);
+    
+    this.svg.append('polyline')
+        .attr('points', pts)
+        .attr("stroke-width", 1)
+        .attr("stroke", "black");
+    
+    this.svg.append('text')
+	    .attr("x", width - 100)
+        .attr("y", height - 20)
+        .text('better precision')
+        .attr("text-anchor", "middle");
 
     this.svg.selectAll("text")
         .data(data)
@@ -51,24 +85,25 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
         .attr("font-size", function(d) { return Math.log2(d.n + 2) * 4 + 'px'; })
         .attr('fill', function(d) { return dataHandler.discoveryMethodsColorMap(d.method); })
         .on('mouseover', function(d) {
-            if (Math.log2(d.n + 2) * 4 <= 10) {
-			    tooltip.transition()
-				    .duration(200)
-				    .style('opacity', .95)
-			    tooltip.html('<b>' + d.method + '</b>')
-				    .style('left', (d3.event.pageX + 10) + 'px')
-				    .style('top', (d3.event.pageY + 10) + 'px');
-			    }
+            tooltip.transition()
+			    .duration(200)
+			    .style('opacity', .95)
+		    tooltip.html('<b>' + d.method + '</b>: ' + d.n + ' confirmed planet' + ((d.n === 1) ? '' : 's'))
+			    .style('left', (d3.event.pageX + 10) + 'px')
+			    .style('top', (d3.event.pageY + 10) + 'px');
 		    }
 		)
 		.on('mouseout', function(d) {
-		    if (Math.log2(d.n + 2) * 4 <= 10) {
-			    tooltip.transition()
-				    .duration(500)
-				    .style('opacity', 0);
-			    }
+		    tooltip.transition()
+			    .duration(500)
+			    .style('opacity', 0);
 		    }
 		);
+	
+	this.svg.append('text')
+        .text('better data availability')
+        .attr("text-anchor", "middle")
+        .attr('transform', 'translate(30, 120)rotate(-90)');
 }
 
 OrbitsVisualisation.prototype.count = function() {
@@ -200,6 +235,7 @@ OrbitsVisualisation.prototype._errors = function() {
         if (data.hasOwnProperty(method)) {
             data[method] -= lower;
             data[method] /= upper - lower;
+            data[method] = Math.pow(data[method], 1 / 4); /* gratuitious quartic root is gratuitious */
         }
     }
     
