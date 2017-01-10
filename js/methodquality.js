@@ -1,9 +1,5 @@
 var OrbitsVisualisation = function() {
     this.tabID = "#methodquality";
-    this.columns = ['pl_bmasse', 'pl_dens', 'pl_eqt', 'pl_imppar',
-                    'pl_insol', 'pl_occdep', 'pl_orbeccen', 'pl_orbincl',
-                    'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper',
-                    'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
     this.svg = d3.select('#methodquality-svg');
 }
 
@@ -11,7 +7,12 @@ OrbitsVisualisation.prototype.draw = function() {
     $("#methodquality-svg").empty();
     this.count();
 
+    this.columns = ['pl_bmasse', 'pl_dens', 'pl_eqt', 'pl_imppar',
+                    'pl_insol', 'pl_occdep', 'pl_orbeccen', 'pl_orbincl',
+                    'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper',
+                    'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
     var presence = this._presence();
+    this.columns = ['pl_bmasse', 'pl_orbper', 'pl_orbsmax'];
     var errors = this._errors();
     
     var data = [];
@@ -44,10 +45,11 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
         .append("text")
         .attr("x", function(d) { return xScale(d.x); })
         .attr("y", function(d) { return yScale(d.y); })
-        .attr("opacity", "0.5")
+        .attr("opacity", "0.8")
         .text(function(d) { return d.method; })
         .attr("text-anchor", "middle")
         .attr("font-size", function(d) { return Math.log2(d.n + 2) * 4 + 'px'; })
+        .attr('fill', function(d) { return dataHandler.discoveryMethodsColorMap(d.method); })
         .on('mouseover', function(d) {
             if (Math.log2(d.n + 2) * 4 <= 10) {
 			    tooltip.transition()
