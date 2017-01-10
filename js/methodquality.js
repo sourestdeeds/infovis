@@ -34,10 +34,10 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
     
     var xScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([128, width - 128]);
+                     .range([160, width - 160]);
     var yScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([height - 32, 32]);
+                     .range([height - 80, 80]);
 
     this.svg.selectAll("text")
         .data(data)
