@@ -7,6 +7,7 @@ var DataHandler = function(dataFile, locationsFile) {
 
 	this.data = [];
 	this.selectedData = [];
+	this.selectedDataAllMethods = [];
 	this.highlightedData = [];
 	this.discoveryMethods = [];
 	this.discoveryMethodFilter = {}
@@ -60,21 +61,22 @@ DataHandler.prototype.setRadiusRange = function(fromRadius, toRadius) {
 
 DataHandler.prototype.filterData = function() {
 	var self = this;
-
-	this.selectedData = this.data.filter(function(entry) {
+	
+	this.selectedDataAllMethods = this.data.filter(function(entry) {
 		year = parseInt(entry['pl_disc']);
 		radius = parseFloat(entry['pl_rade']);
-		method = entry['pl_discmethod'];
 
 		if (self.timeFilterOn && !(self.currentRange[0] <= year && year <= self.currentRange[1]))
 			return false;
 
-		//console.log(self.currentRadiusRange[0], radius, self.currentRadiusRange[1]);
-
 		if (self.radiusFilterOn && !(self.currentRadiusRange[0] <= radius && radius <= self.currentRadiusRange[1]))
 			return false;
 
-		return self.discoveryMethodFilter[method];
+		return true;
+	});
+
+	this.selectedData = this.selectedDataAllMethods.filter(function(entry) {
+		return self.discoveryMethodFilter[entry['pl_discmethod']];
 	});
 }
 

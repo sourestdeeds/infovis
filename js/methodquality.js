@@ -85,7 +85,7 @@ OrbitsVisualisation.prototype._errors = function() {
         totals[column] = [0, 0];
     });
         
-    dataHandler.selectedData.forEach(function(entry) {
+    dataHandler.selectedDataAllMethods.forEach(function(entry) {
         var method = entry['pl_discmethod'];
         
         if (!(method in data)) {
