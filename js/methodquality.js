@@ -5,7 +5,6 @@ var OrbitsVisualisation = function() {
                     'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper',
                     'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
     this.svg = d3.select('#methodquality-svg');
-    this.PADDING = 64;
 }
 
 OrbitsVisualisation.prototype.draw = function() {
@@ -30,21 +29,44 @@ OrbitsVisualisation.prototype.draw = function() {
 OrbitsVisualisation.prototype._drawSVG = function(data) {
     var width = $('#methodquality-svg').outerWidth();
 	var height = $('#methodquality-svg').outerHeight();
+	var tooltip = d3.select('#tooltip');
     
     var xScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([this.PADDING, width - this.PADDING]);
+                     .range([128, width - 128]);
     var yScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([height - this.PADDING, this.PADDING]);
+                     .range([height - 32, 32]);
 
-    this.svg.selectAll("circle")
+    this.svg.selectAll("text")
         .data(data)
         .enter()
-        .append("circle")
-        .attr("cx", function(d) { return xScale(d.x); })
-        .attr("cy", function(d) { return yScale(d.y); })
-        .attr("r", function(d) { return 2; });
+        .append("text")
+        .attr("x", function(d) { return xScale(d.x); })
+        .attr("y", function(d) { return yScale(d.y); })
+        .attr("opacity", "0.5")
+        .text(function(d) { return d.method; })
+        .attr("text-anchor", "middle")
+        .attr("font-size", function(d) { return Math.log2(d.n + 2) * 4 + 'px'; })
+        .on('mouseover', function(d) {
+            if (Math.log2(d.n + 2) * 4 <= 10) {
+			    tooltip.transition()
+				    .duration(200)
+				    .style('opacity', .95)
+			    tooltip.html('<b>' + d.method + '</b>')
+				    .style('left', (d3.event.pageX + 10) + 'px')
+				    .style('top', (d3.event.pageY + 10) + 'px');
+			    }
+		    }
+		)
+		.on('mouseout', function(d) {
+		    if (Math.log2(d.n + 2) * 4 <= 10) {
+			    tooltip.transition()
+				    .duration(500)
+				    .style('opacity', 0);
+			    }
+		    }
+		);
 }
 
 OrbitsVisualisation.prototype.count = function() {
