@@ -5,22 +5,22 @@ var OrbitsVisualisation = function() {
                     'pl_orblper', 'pl_orbper', 'pl_orbsmax', 'pl_orbtper',
                     'pl_rade', 'pl_ratdor', 'pl_ratror', 'pl_rvamp'];
     this.svg = d3.select('#methodquality-svg');
+    this.PADDING = 64;
 }
 
 OrbitsVisualisation.prototype.draw = function() {
     $("#methodquality-svg").empty();
-    
-    console.log('yes');
+    this.count();
 
     var presence = this._presence();
     var errors = this._errors();
-    var counts = this._counts();
     
     var data = [];
+    var self = this;
     
     for (method in presence) {
         if (presence.hasOwnProperty(method)) {
-            data.push({method: method, n: counts[method], x: errors[method], y: presence[method]});
+            data.push({method: method, n: self.counts[method], x: errors[method], y: presence[method]});
         }
     }
 
@@ -33,10 +33,10 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
     
     var xScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([10, width - 10]);
+                     .range([this.PADDING, width - this.PADDING]);
     var yScale = d3.scale.linear()
                      .domain([0, 1])
-                     .range([10, height - 10]);
+                     .range([height - this.PADDING, this.PADDING]);
 
     this.svg.selectAll("circle")
         .data(data)
@@ -47,7 +47,7 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
         .attr("r", function(d) { return 2; });
 }
 
-OrbitsVisualisation.prototype._counts = function() {
+OrbitsVisualisation.prototype.count = function() {
     var data = {};
     
     dataHandler.selectedData.forEach(function(entry) {
@@ -60,7 +60,7 @@ OrbitsVisualisation.prototype._counts = function() {
         }
     });
     
-    return data;
+    this.counts = data;
 }
 
 OrbitsVisualisation.prototype._presence = function() {
@@ -162,7 +162,10 @@ OrbitsVisualisation.prototype._errors = function() {
             });
             
             data[method] = total / count;
-            values.push(total / count);
+            
+            if (method in self.counts) {
+                values.push(total / count);
+            }
         }
     }
     
