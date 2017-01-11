@@ -5,7 +5,7 @@ function onResize() {
 	var tabpaneHeight = windowHeight - navbarHeight - footerHeight;
 
 	$('body').css('padding-top', navbarHeight);
-	$('.tab-pane').css('height', tabpaneHeight);
+	$('.tab-pane').not('#about').css('height', tabpaneHeight);
 
 	$('.infobar .panel-body').css('max-height', tabpaneHeight - 100);
 

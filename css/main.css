@@ -286,3 +286,16 @@ footer {
 	pointer-events: none;
 	z-index: 100;
 }
+
+#about {
+	padding-bottom: 150px;
+}
+
+#uhlogo {
+	margin-top: 20px;
+	float: right;
+}
+
+#uhlogo img {
+	width: 150px;
+}
