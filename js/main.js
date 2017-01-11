@@ -7,6 +7,7 @@ function main() {
 	temperatureVisualisation = new TemperatureVisualisation();
 
     catchTabEvents();
+    initAmountDisplay();
     timeSlider.setup();
     radiusSlider.setup();
 
@@ -32,6 +33,16 @@ function catchTabEvents() {
         var target = $(e.target).attr('href');
         visualisationManager.switchTo(target);
     });
+}
+
+function initAmountDisplay() {
+	$('footer').on('mouseover', function() {
+		$('#amount').show();
+	});
+
+	$('footer').on('mouseout', function() {
+		$('#amount').hide();
+	});
 }
 
 function switchToTab(tabId) {

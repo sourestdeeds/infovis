@@ -271,3 +271,18 @@ footer {
 	z-index: 100;
 	box-shadow: 1px 1px 5px #000;
 }
+
+#amount {
+	position: absolute;
+	bottom:130px;
+	right: 0;
+	display: none;
+	text-align: left;
+	padding: 7px;
+	font-size: 12px;
+	background: lightsteelblue;
+	border: 0px;
+	border-radius: 8px 0px 0px 0px;
+	pointer-events: none;
+	z-index: 100;
+}

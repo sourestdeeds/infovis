@@ -79,6 +79,8 @@ DataHandler.prototype.filterData = function() {
 	this.selectedData = this.selectedDataAllMethods.filter(function(entry) {
 		return self.discoveryMethodFilter[entry['pl_discmethod']];
 	});
+
+    $('#amount').text(this.selectedData.length + ' planets selected');
 }
 
 DataHandler.prototype.toggleHighlightedPlanet = function(selectedPlanet) {
