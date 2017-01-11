@@ -72,7 +72,11 @@ OrbitsVisualisation.prototype._drawSVG = function(data) {
         .attr("y", height - 20)
         .text('better precision')
         .attr("text-anchor", "middle");
-
+    
+    // D3 fuckness prevention
+    data = [{method: "Dummy Element", n: "0", x: "0", y: "0"}].concat(data);
+    // No idea why this is necessary
+    
     this.svg.selectAll("text")
         .data(data)
         .enter()
