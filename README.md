@@ -1,7 +1,7 @@
 # NASA Exoplanet Archive Visualisation
 This visualisation was made as a part of the course Information Visualisation at [Hasselt University](http://www.uhasselt.be). 
 
-A live version of the visualisation can be found [here](https://brentchesny.github.io/infovis/). A video demonstration is available on [YouTube](https://www.youtube.com/watch?v=F7wFQ8CJNGo).
+A live version of the visualisation can be found [here](https://sourestdeeds.github.io/infovis/). A video demonstration is available on [YouTube](https://www.youtube.com/watch?v=F7wFQ8CJNGo).
 
 ### Authors
 - [Brent Chesny](https://github.com/BrentChesny)  
